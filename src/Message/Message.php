@@ -1,28 +1,43 @@
 <?php
-// Jivoo_HTTP 
+// Jivoo HTTP 
 // Copyright (c) 2016 Niels Sonnich Poulsen (http://nielssp.dk)
 // Licensed under the MIT license.
 // See the LICENSE file or http://opensource.org/licenses/MIT for more information.
-namespace Jivoo\Http;
+namespace Jivoo\Http\Message;
 
 /**
  * Description of Message
  */
-abstract class Message implements \Psr\Http\Message\MessageInterface
+class Message implements \Psr\Http\Message\MessageInterface
 {
+    
+    /**
+     * @var string[][]
+     */
     private $headers = [];
     
+    /**
+     * @var string[]
+     */
     private $headerKeys = [];
     
+    /**
+     * @var type 
+     */
     private $protocolVersion = '1.1';
     
-    private $body = null;
+    /**
+     * @var \Psr\Http\Message\StreamInterface
+     */
+    private $body;
+    
+    public function __construct(\Psr\Http\Message\StreamInterface $body)
+    {
+        $this->body = $body;
+    }
     
     public function getBody()
     {
-        if (! isset($this->body)) {
-            // TODO
-        }
         return $this->body;
     }
 

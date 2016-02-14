@@ -7,7 +7,7 @@ namespace Jivoo\Http;
 
 use Jivoo\InvalidPropertException;
 
-class UploadedFile
+class UploadedFile implements \Psr\Http\Message\UploadedFileInterface
 {
     private $tmpName;
     private $name;
@@ -93,4 +93,30 @@ class UploadedFile
         }
         return $result;
     }
+
+    public function getClientFilename()
+    {
+        return $this->name;
+    }
+
+    public function getClientMediaType()
+    {
+        return $this->type;
+    }
+
+    public function getError()
+    {
+        return $this->error;
+    }
+
+    public function getSize()
+    {
+        return $this->size;
+    }
+
+    public function getStream()
+    {
+        // TODO
+    }
+
 }
