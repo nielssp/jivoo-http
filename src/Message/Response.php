@@ -41,5 +41,4 @@ class Response extends Message implements \Psr\Http\Message\ResponseInterface
         $response->reason = $reasonPhrase;
         return $response;
     }
-
 }

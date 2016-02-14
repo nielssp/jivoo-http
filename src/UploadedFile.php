@@ -118,5 +118,4 @@ class UploadedFile implements \Psr\Http\Message\UploadedFileInterface
     {
         // TODO
     }
-
 }

@@ -22,7 +22,7 @@ class Message implements \Psr\Http\Message\MessageInterface
     private $headerKeys = [];
     
     /**
-     * @var type 
+     * @var type
      */
     private $protocolVersion = '1.1';
     
@@ -39,6 +39,15 @@ class Message implements \Psr\Http\Message\MessageInterface
     public function getBody()
     {
         return $this->body;
+    }
+    
+    protected function setHeader($name, $value)
+    {
+        if (! is_array($value)) {
+            $value = [$value];
+        }
+        $message->headers[$name] = $value;
+        $message->headerKeys[strtolower($name)] = $name;
     }
 
     public function getHeader($name)
@@ -90,12 +99,8 @@ class Message implements \Psr\Http\Message\MessageInterface
 
     public function withHeader($name, $value)
     {
-        if (! is_array($value)) {
-            $value = [$value];
-        }
         $message = clone $this;
-        $message->headers[$name] = $value;
-        $message->headerKeys[strtolower($name)] = $name;
+        $message->setHeader($name, $value);
         return $message;
     }
 
@@ -117,5 +122,4 @@ class Message implements \Psr\Http\Message\MessageInterface
         unset($message->headerKeys[$name]);
         return $message;
     }
-
 }

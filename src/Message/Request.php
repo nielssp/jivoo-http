@@ -14,7 +14,17 @@ class Request extends Message implements \Psr\Http\Message\RequestInterface
     
     private $requestTarget = '/';
     
-    private $uri = null;
+    private $uri;
+    
+    public function __construct(Uri $uri)
+    {
+        parent::__construct(new StringStream(''));
+        $this->uri = $uri;
+        $host = $uri->getHost();
+        if ($host != '') {
+            $this->setHeader('Host', $host);
+        }
+    }
     
     public function getMethod()
     {
@@ -49,6 +59,12 @@ class Request extends Message implements \Psr\Http\Message\RequestInterface
     {
         $request = clone $this;
         $request->uri = $uri;
+        if (! $preserveHost or ! $this->hasHeader('Host')) {
+            $host = $uri->getHost();
+            if ($host != '') {
+                $request->setHeader('Host', $host);
+            }
+        }
         return $request;
     }
 }

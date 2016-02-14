@@ -70,7 +70,7 @@ class Uri implements \Psr\Http\Message\UriInterface
                 if ($authority == '' and isset($path[1]) and $path[1] == '/') {
                     $path = '/' . ltrim($path, '/');
                 }
-            } else if ($authority != '') {
+            } elseif ($authority != '') {
                 $path = '/' . $path;
             }
             $uri .= $path;
@@ -122,7 +122,7 @@ class Uri implements \Psr\Http\Message\UriInterface
     {
         if ($this->scheme == 'http' and $this->port == 80) {
             return '';
-        } else if ($this->scheme == 'https' and $this->port == 443) {
+        } elseif ($this->scheme == 'https' and $this->port == 443) {
             return '';
         }
         return $this->port;
