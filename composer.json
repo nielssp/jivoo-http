@@ -23,6 +23,7 @@
     "php": ">=5.4.0",
     "ext-json": "*",
     "psr/log": "1.0",
+    "psr/http-message": "1.0",
     "jivoo/core": "dev-master",
     "composer/semver": "^1.2"
   },
