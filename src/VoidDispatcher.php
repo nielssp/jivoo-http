@@ -10,65 +10,65 @@ namespace Jivoo\Http;
  */
 class VoidDispatcher implements Dispatcher
 {
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function getPrefixes()
     {
         return array('void');
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function validate(&$route)
     {
         return isset($route['void']);
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function autoRoute(RoutingTable $table, $route, $resource = false)
     {
         return null;
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function toRoute($routeString)
     {
         return array('void' => true);
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function fromRoute($route)
     {
         return 'void:';
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function isCurrent($route)
     {
         return false;
     }
   
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function getPath($route, $path = null)
     {
         return '';
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function createDispatch($route)
     {
         throw new InvalidRouteException(tr('Trying to dispatch void route.'));

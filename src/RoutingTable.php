@@ -10,48 +10,48 @@ namespace Jivoo\Http;
  */
 class RoutingTable
 {
-  /**
-   * @var Routing Routing module.
-   */
+    /**
+     * @var Routing Routing module.
+     */
     private $routing;
   
-  /**
-   * @var string[] Last pattern
-   */
+    /**
+     * @var string[] Last pattern
+     */
     private $pattern = null;
   
-  /**
-   * @var string[] Nested patterns.
-   */
+    /**
+     * @var string[] Nested patterns.
+     */
     private $nestStack = array();
 
-  /**
-   * Construct routing table.
-   * @param Routing $routing Routing module.
-   */
+    /**
+     * Construct routing table.
+     * @param Routing $routing Routing module.
+     */
     public function __construct(Routing $routing)
     {
         $this->routing = $routing;
     }
 
-  /**
-   * Load routing file.
-   * @param string $file File.
-   * @return self Self.
-   */
+    /**
+     * Load routing file.
+     * @param string $file File.
+     * @return self Self.
+     */
     public function load($file)
     {
         require $file;
         return $this;
     }
 
-  /**
-   * Automatically create routes for all actions in a controller or just a
-   * single action.
-   * @param array|Linkable|string|null $route A route, see {@see Routing}.
-   * @param array $options An associative array of options for auto routing.
-   * @return self Self.
-   */
+    /**
+     * Automatically create routes for all actions in a controller or just a
+     * single action.
+     * @param array|Linkable|string|null $route A route, see {@see Routing}.
+     * @param array $options An associative array of options for auto routing.
+     * @return self Self.
+     */
     public function auto($route, $options = array())
     {
         $route = $this->routing->validateRoute($route);
@@ -63,22 +63,22 @@ class RoutingTable
         return $this;
     }
   
-  /**
-   * Create route for root, i.e. the frontpage.
-   * @param array|Linkable|string|null $route A route, {@see Routing}.
-   * @return self Self.
-   */
+    /**
+     * Create route for root, i.e. the frontpage.
+     * @param array|Linkable|string|null $route A route, {@see Routing}.
+     * @return self Self.
+     */
     public function root($route)
     {
         $this->routing->setRoot($route);
         return $this;
     }
   
-  /**
-   * Create route for error page.
-   * @param array|Linkable|string|null $route A route, {@see Routing}.
-   * @return self Self.
-   */
+    /**
+     * Create route for error page.
+     * @param array|Linkable|string|null $route A route, {@see Routing}.
+     * @return self Self.
+     */
     public function error($route)
     {
         $this->routing->setError($route);
@@ -86,13 +86,13 @@ class RoutingTable
     }
 
 
-  /**
-   * Create route for requests matching a pattern.
-   * @param string $pattern A path to match, see {@see Routing::addRoute}.
-   * @param array|Linkable|string|null $route A route, {@see Routing}.
-   * @param int $priority Priority of route.
-   * @return self Self.
-   */
+    /**
+     * Create route for requests matching a pattern.
+     * @param string $pattern A path to match, see {@see Routing::addRoute}.
+     * @param array|Linkable|string|null $route A route, {@see Routing}.
+     * @param int $priority Priority of route.
+     * @return self Self.
+     */
     public function match($pattern, $route, $priority = 5)
     {
         if (isset($this->nestStack[0]) and $this->nestStack[0] !== '') {
@@ -102,12 +102,12 @@ class RoutingTable
         return $this;
     }
   
-  /**
-   * Automatically create routes for a resource. Expects controller to be set in
-   * the route.
-   * @param array|Linkable|string|null $route A route, {@see Routing}.
-   * @return self Self.
-   */
+    /**
+     * Automatically create routes for a resource. Expects controller to be set in
+     * the route.
+     * @param array|Linkable|string|null $route A route, {@see Routing}.
+     * @return self Self.
+     */
     public function resource($route)
     {
         $route = $this->routing->validateRoute($route);
@@ -119,10 +119,10 @@ class RoutingTable
         return $this;
     }
   
-  /**
-   * Nest resources.
-   * @return self Self.
-   */
+    /**
+     * Nest resources.
+     * @return self Self.
+     */
     public function nest()
     {
         if (isset($this->nestStack[0]) and $this->nestStack[0] !== '') {
@@ -132,21 +132,21 @@ class RoutingTable
         return $this;
     }
   
-  /**
-   * End nesting of resources.
-   * @return self Self.
-   */
+    /**
+     * End nesting of resources.
+     * @return self Self.
+     */
     public function end()
     {
         array_shift($this->nestStack);
         return $this;
     }
   
-  /**
-   * Increment numeric parameter-patterns.
-   * @param string $pattern Pattern.
-   * @return string Pattern.
-   */
+    /**
+     * Increment numeric parameter-patterns.
+     * @param string $pattern Pattern.
+     * @return string Pattern.
+     */
     public static function incrementParameters($pattern)
     {
         return preg_replace_callback(

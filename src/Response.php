@@ -19,49 +19,49 @@ use Jivoo\InvalidPropertyException;
  */
 abstract class Response
 {
-  /**
-   * @var int HTTP status code
-   */
+    /**
+     * @var int HTTP status code
+     */
     private $status;
   
-  /**
-   * @var string Response type.
-   */
+    /**
+     * @var string Response type.
+     */
     private $type;
   
-  /**
-   * @var string Caching.
-   */
+    /**
+     * @var string Caching.
+     */
     private $cache = null;
   
-  /**
-   * @var int Modified time.
-   */
+    /**
+     * @var int Modified time.
+     */
     private $modified = null;
   
-  /**
-   * @var int Max life time.
-   */
+    /**
+     * @var int Max life time.
+     */
     private $maxAge = null;
 
-  /**
-   * Construct response.
-   * @param int $status HTTP status code, e.g. 200 for OK.
-   * @param string $type Response type, either a MIME type or a file extension
-   * known by {@see Utilities::convertType()}.
-   */
+    /**
+     * Construct response.
+     * @param int $status HTTP status code, e.g. 200 for OK.
+     * @param string $type Response type, either a MIME type or a file extension
+     * known by {@see Utilities::convertType()}.
+     */
     public function __construct($status, $type)
     {
         $this->status = $status;
         $this->type = Utilities::convertType($type);
     }
 
-  /**
-   * Get value of property.
-   * @param string $name Property name.
-   * @return mixed Value of property.
-   * @throws InvalidPropertyException If unknown property.
-   */
+    /**
+     * Get value of property.
+     * @param string $name Property name.
+     * @return mixed Value of property.
+     * @throws InvalidPropertyException If unknown property.
+     */
     public function __get($property)
     {
         switch ($property) {
@@ -77,12 +77,12 @@ abstract class Response
         throw new InvalidPropertyException(tr('Invalid property: %1', $property));
     }
 
-  /**
-   * Set value of property.
-   * @param string $name Property name.
-   * @param string $value Value of property.
-   * @throws InvalidPropertyException If unknown property.
-   */
+    /**
+     * Set value of property.
+     * @param string $name Property name.
+     * @param string $value Value of property.
+     * @throws InvalidPropertyException If unknown property.
+     */
     public function __set($property, $value)
     {
         switch ($property) {
@@ -99,29 +99,29 @@ abstract class Response
     }
 
 
-  /**
-   * Whether or not a property is set.
-   * @param string $name Property name.
-   * @return bool True if property set.
-   * @throws InvalidPropertyException If unknown property.
-   */
+    /**
+     * Whether or not a property is set.
+     * @param string $name Property name.
+     * @return bool True if property set.
+     * @throws InvalidPropertyException If unknown property.
+     */
     public function __isset($property)
     {
         return isset($this->$property);
     }
 
-  /**
-   * Get response body.
-   * @return string Response body.
-   */
+    /**
+     * Get response body.
+     * @return string Response body.
+     */
     abstract public function getBody();
 
-  /**
-   * Set cache settings.
-   * @param string $public Public or private.
-   * @param int|string $expires Time on which cache expires. Can be a UNIX
-   * timestamp or a string used with {@see strtotime()}.
-   */
+    /**
+     * Set cache settings.
+     * @param string $public Public or private.
+     * @param int|string $expires Time on which cache expires. Can be a UNIX
+     * timestamp or a string used with {@see strtotime()}.
+     */
     public function cache($public = true, $expires = '+1 year')
     {
         if (!is_int($expires)) {

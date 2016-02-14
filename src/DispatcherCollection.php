@@ -12,31 +12,31 @@ use Jivoo\InvalidPropertyException;
  */
 class DispatcherCollection
 {
-  /**
-   * @var Routing Routing module.
-   */
+    /**
+     * @var Routing Routing module.
+     */
     private $routing;
   
-  /**
-   * @var Dispatcher[] Dispatchers.
-   */
+    /**
+     * @var Dispatcher[] Dispatchers.
+     */
     private $dispatchers = array();
   
-  /**
-   * Construct collection of dispatcher objects.
-   * @param Routing $routing Routing module.
-   */
+    /**
+     * Construct collection of dispatcher objects.
+     * @param Routing $routing Routing module.
+     */
     public function __construct(Routing $routing)
     {
         $this->routing = $routing;
     }
   
-  /**
-   * Get dispatcher for prefix.
-   * @param string $prefix Prefix.
-   * @throws InvalidPropertyException If no dispatcher found.
-   * @return Dispatcher Dispatcher.
-   */
+    /**
+     * Get dispatcher for prefix.
+     * @param string $prefix Prefix.
+     * @throws InvalidPropertyException If no dispatcher found.
+     * @return Dispatcher Dispatcher.
+     */
     public function __get($prefix)
     {
         if (isset($this->dispatchers[$prefix])) {
@@ -45,20 +45,20 @@ class DispatcherCollection
         throw new InvalidPropertyException(tr('Invalid property: %1', $prefix));
     }
   
-  /**
-   * Whether or not a dispatcher exists for the given prefix.
-   * @param string $prefix Prefix.
-   * @return bool True if dispatcher exists.
-   */
+    /**
+     * Whether or not a dispatcher exists for the given prefix.
+     * @param string $prefix Prefix.
+     * @return bool True if dispatcher exists.
+     */
     public function __isset($prefix)
     {
         return isset($this->dispatchers[$prefix]);
     }
   
-  /**
-   * Add a dispatcher object.
-   * @param Dispatcher $dispatcher Dispatcher object.
-   */
+    /**
+     * Add a dispatcher object.
+     * @param Dispatcher $dispatcher Dispatcher object.
+     */
     public function add(Dispatcher $dispatcher)
     {
         $prefixes = $dispatcher->getPrefixes();
@@ -67,12 +67,12 @@ class DispatcherCollection
         }
     }
   
-  /**
-   * Validate a route.
-   * @param array|Linkable|string|null $route A route, see {@see Routing}.
-   * @throws InvalidRouteException If route is not valid.
-   * @return array A valid route array.
-   */
+    /**
+     * Validate a route.
+     * @param array|Linkable|string|null $route A route, see {@see Routing}.
+     * @throws InvalidRouteException If route is not valid.
+     * @return array A valid route array.
+     */
     public function validate($route)
     {
         if (!isset($route)) {
@@ -134,12 +134,12 @@ class DispatcherCollection
         return $route;
     }
   
-  /**
-   * Convert a route string to a route array.
-   * @param string $routeString Route string.
-   * @throws InvalidRouteException If string has unknown prefix.
-   * @return array A route array.
-   */
+    /**
+     * Convert a route string to a route array.
+     * @param string $routeString Route string.
+     * @throws InvalidRouteException If string has unknown prefix.
+     * @return array A route array.
+     */
     public function toRoute($routeString)
     {
         if (preg_match('/^([a-zA-Z0-9_]+):/', $routeString, $matches) === 1) {

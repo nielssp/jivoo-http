@@ -33,92 +33,92 @@ use Jivoo\InvalidPropertyException;
 class Request
 {
 
-  /**
-   * @var string[] Original path.
-   */
+    /**
+     * @var string[] Original path.
+     */
     private $realPath;
 
-  /**
-   * @var string[] Path as array.
-   */
+    /**
+     * @var string[] Path as array.
+     */
     private $path;
 
-  /**
-   * @var array GET query.
-   */
+    /**
+     * @var array GET query.
+     */
     private $query;
 
-  /**
-   * @var Cookies Cookies object.
-   */
+    /**
+     * @var Cookies Cookies object.
+     */
     private $cookies;
 
-  /**
-   * @var array|null Route.
-   */
+    /**
+     * @var array|null Route.
+     */
     private $route = null;
 
-  /**
-   * @var string Fragment.
-   */
+    /**
+     * @var string Fragment.
+     */
     private $fragment = null;
 
-  /**
-   * @var array POST data.
-   */
+    /**
+     * @var array POST data.
+     */
     private $data;
   
-  /**
-   * @var bool Whether or not POST data is available.
-   */
+    /**
+     * @var bool Whether or not POST data is available.
+     */
     private $hasData = false;
   
-  /**
-   * @var array File upload data.
-   */
+    /**
+     * @var array File upload data.
+     */
     private $files;
   
-  /**
-   * @var bool Whether or not request is from mobile browser.
-   */
+    /**
+     * @var bool Whether or not request is from mobile browser.
+     */
     private $mobile = null;
   
-  /**
-   * @var string Domain name, protocol and port.
-   */
+    /**
+     * @var string Domain name, protocol and port.
+     */
     private $domainName = '';
   
-  /**
-   * @var string Request method, e.g. 'GET', 'POST' etc.
-   */
+    /**
+     * @var string Request method, e.g. 'GET', 'POST' etc.
+     */
     private $method = 'GET';
 
-  /**
-   * @var string[] List of types accepted by the client (assumes that the client
-   * wants HTML if no accept header is set).
-   */
+    /**
+     * @var string[] List of types accepted by the client (assumes that the client
+     * wants HTML if no accept header is set).
+     */
     private $accepts = array('html');
 
-  /**
-   * @var string[] List of encodings accepted by the client.
-   */
+    /**
+     * @var string[] List of encodings accepted by the client.
+     */
     private $encodings = array();
   
-  /**
-   * @var bool Whether or not HTTPS was used.
-   */
+    /**
+     * @var bool Whether or not HTTPS was used.
+     */
     private $secure = false;
   
-  /**
-   * @var RequestToken
-   */
+    /**
+     * @var RequestToken
+     */
     private $requestToken = null;
 
-  /**
-   * Construct request.
-   * @param string $cookiePrefix Cookie prefix to use for cookies.
-   * @param string $basePath Base path of application.
-   */
+    /**
+     * Construct request.
+     * @param string $cookiePrefix Cookie prefix to use for cookies.
+     * @param string $basePath Base path of application.
+     */
     public function __construct($cookiePrefix = '', $basePath = '/')
     {
         $url = $_SERVER['REQUEST_URI'];
@@ -193,12 +193,12 @@ class Request
         $this->cookies = new Cookies($_COOKIE, $cookiePrefix, $basePath);
     }
 
-  /**
-   * Get value of property.
-   * @param string $name Property name.
-   * @return mixed Value of property.
-   * @throws InvalidPropertyException If unknown property.
-   */
+    /**
+     * Get value of property.
+     * @param string $name Property name.
+     * @return mixed Value of property.
+     * @throws InvalidPropertyException If unknown property.
+     */
     public function __get($name)
     {
         switch ($name) {
@@ -228,12 +228,12 @@ class Request
         throw new InvalidPropertyException(tr('Invalid property: %1', $name));
     }
 
-  /**
-   * Set value of property.
-   * @param string $name Property name.
-   * @param string $value Value of property.
-   * @throws InvalidPropertyException If unknown property.
-   */
+    /**
+     * Set value of property.
+     * @param string $name Property name.
+     * @param string $value Value of property.
+     * @throws InvalidPropertyException If unknown property.
+     */
     public function __set($name, $value)
     {
         switch ($name) {
@@ -248,10 +248,10 @@ class Request
         throw new InvalidPropertyException(tr('Invalid property: %1', $name));
     }
 
-  /**
-   * Convert request to associative array.
-   * @return array Aassociative array.
-   */
+    /**
+     * Convert request to associative array.
+     * @return array Aassociative array.
+     */
     public function toArray()
     {
         return array(
@@ -272,10 +272,10 @@ class Request
         );
     }
   
-  /**
-   * Unset the entire GET query array or part of it.
-   * @param string $key A specific key to unset.
-   */
+    /**
+     * Unset the entire GET query array or part of it.
+     * @param string $key A specific key to unset.
+     */
     public function unsetQuery($key = null)
     {
         if (!isset($key)) {
@@ -285,12 +285,12 @@ class Request
         }
     }
   
-  /**
-   * Whether or not the current request is POST and has a valid access token.
-   * @param string|string[] $key Optional key or list of keys to test for
-   * existence in POST-data.
-   * @return boolean True if valid, false otherwise.
-   */
+    /**
+     * Whether or not the current request is POST and has a valid access token.
+     * @param string|string[] $key Optional key or list of keys to test for
+     * existence in POST-data.
+     * @return boolean True if valid, false otherwise.
+     */
     public function hasValidData($key = null)
     {
         if (!$this->hasData) {
@@ -310,19 +310,19 @@ class Request
         return $this->checkToken();
     }
   
-  /**
-   * Create HTML for a hidden form input containing the access token.
-   * @return string HTML for hidden input.
-   */
+    /**
+     * Create HTML for a hidden form input containing the access token.
+     * @return string HTML for hidden input.
+     */
     public function createHiddenToken()
     {
         return '<input type="hidden" name="access_token" value="' . $this->getToken() . '" />';
     }
 
-  /**
-   * Get the current access token or generate a new one.
-   * @return string Access token.
-   */
+    /**
+     * Get the current access token or generate a new one.
+     * @return string Access token.
+     */
     public function getToken()
     {
         if (!isset($this->requestToken)) {
@@ -332,10 +332,10 @@ class Request
         return $this->requestToken->getToken();
     }
 
-  /**
-   * Compare the session access token with the POST'ed access token.
-   * @return bool True if they match, false otherwise.
-   */
+    /**
+     * Compare the session access token with the POST'ed access token.
+     * @return bool True if they match, false otherwise.
+     */
     public function checkToken()
     {
         if (!isset($this->requestToken)) {
@@ -348,59 +348,59 @@ class Request
         return $this->requestToken->getToken() === $this->data['access_token'];
     }
 
-  /**
-   * Whether or not the current request method is GET.
-   * @return bool True if GET, false if not.
-   */
+    /**
+     * Whether or not the current request method is GET.
+     * @return bool True if GET, false if not.
+     */
     public function isGet()
     {
         return $this->method == 'GET';
     }
 
-  /**
-   * Whether or not the current request method is POST.
-   * @return bool True if POST, false if not.
-   */
+    /**
+     * Whether or not the current request method is POST.
+     * @return bool True if POST, false if not.
+     */
     public function isPost()
     {
         return $this->method == 'POST';
     }
 
-  /**
-   * Whether or not the current request method is PATCH.
-   * @return bool True if PATCH, false if not.
-   */
+    /**
+     * Whether or not the current request method is PATCH.
+     * @return bool True if PATCH, false if not.
+     */
     public function isPatch()
     {
         return $this->method == 'PATCH';
     }
 
-  /**
-   * Whether or not the current request method is DELETE.
-   * @return bool True if DELETE, false if not.
-   */
+    /**
+     * Whether or not the current request method is DELETE.
+     * @return bool True if DELETE, false if not.
+     */
     public function isDelete()
     {
         return $this->method == 'DELETE';
     }
 
-  /**
-   * Whether or not the current request method is PUT.
-   * @return bool True if PUT, false if not.
-   */
+    /**
+     * Whether or not the current request method is PUT.
+     * @return bool True if PUT, false if not.
+     */
     public function isPut()
     {
         return $this->method == 'PUT';
     }
 
-  /**
-   * Whether or not the client accepts the specified type. If the type is
-   * omitted then a list of acceptable types is returned.
-   * @param string $type Type, can be a MIME type or a file extension known by
-   * {@see Utilities::convertType()}.
-   * @return bool|string[] True if client accepts provided type, false otherwise.
-   * List of accepted MIME types if type parameter omitted.
-   */
+    /**
+     * Whether or not the client accepts the specified type. If the type is
+     * omitted then a list of acceptable types is returned.
+     * @param string $type Type, can be a MIME type or a file extension known by
+     * {@see Utilities::convertType()}.
+     * @return bool|string[] True if client accepts provided type, false otherwise.
+     * List of accepted MIME types if type parameter omitted.
+     */
     public function accepts($type = null)
     {
         if (!isset($type)) {
@@ -409,13 +409,13 @@ class Request
         return in_array(Utilities::convertType($type), $this->accepts);
     }
 
-  /**
-   * Whether or not the client accepts the specified encoding. If the type is
-   * omitted then a list of acceptable encodings is returned.
-   * @param string $encoding Encoding.
-   * @return bool|string[] True if client accepts provided encoding, false otherwise.
-   * List of accepted encodings if type parameter omitted.
-   */
+    /**
+     * Whether or not the client accepts the specified encoding. If the type is
+     * omitted then a list of acceptable encodings is returned.
+     * @param string $encoding Encoding.
+     * @return bool|string[] True if client accepts provided encoding, false otherwise.
+     * List of accepted encodings if type parameter omitted.
+     */
     public function acceptsEncoding($encoding = null)
     {
         if (!isset($encoding)) {
@@ -424,20 +424,20 @@ class Request
         return in_array($encoding, $this->encodings);
     }
 
-  /**
-   * Whether or not the current request was made with AJAX.
-   * @return bool True if it is, false otherwise.
-   */
+    /**
+     * Whether or not the current request was made with AJAX.
+     * @return bool True if it is, false otherwise.
+     */
     public function isAjax()
     {
         return isset($_SERVER['HTTP_X_REQUESTED_WITH'])
         and $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest';
     }
   
-  /**
-   * Whether or  not the current request was made by a mobile browser.
-   * @return boolean True if a mobile browser was detected, false otherwise.
-   */
+    /**
+     * Whether or  not the current request was made by a mobile browser.
+     * @return boolean True if a mobile browser was detected, false otherwise.
+     */
     public function isMobile()
     {
         if (!isset($this->mobile)) {

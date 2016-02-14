@@ -20,44 +20,44 @@ use Jivoo\Snippets\SnippetDispatcher;
 class Assets extends LoadableModule
 {
 
-    /**
-     * {@inheritdoc}
-     */
+      /**
+       * {@inheritdoc}
+       */
     protected $modules = array('Routing');
 
-    /**
-     * @var string Document root
-     */
+      /**
+       * @var string Document root
+       */
     private $docRoot = '';
 
-    /**
-     * @var int Length of document root
-     */
+      /**
+       * @var int Length of document root
+       */
     private $docRootLength = 0;
 
-    /**
-     * @var string[] List of blacklisted extensions
-     */
+      /**
+       * @var string[] List of blacklisted extensions
+       */
     private $extensionBlacklist = array('php', 'log');
 
-    /**
-     * @var array[] List of additional asset dirs
-     */
+      /**
+       * @var array[] List of additional asset dirs
+       */
     private $assetDirs = array();
 
-    /**
-     * @var array[] List of additional dynamic asset dirs
-     */
+      /**
+       * @var array[] List of additional dynamic asset dirs
+       */
     private $dynamicAssetDirs = array();
 
-    /**
-     * @var bool Whether or not $assetDirs is sorted
-     */
+      /**
+       * @var bool Whether or not $assetDirs is sorted
+       */
     private $sorted = true;
 
-    /**
-     * {@inheritdoc}
-     */
+      /**
+       * {@inheritdoc}
+       */
     protected function init()
     {
         $this->config->defaults = array(
@@ -101,10 +101,10 @@ class Assets extends LoadableModule
         $this->m->lazy('Extensions')->attachFeature('resources', array($this, 'handleResources'));
     }
 
-    /**
-     * Handle "resources" extension feature.
-     * @param ExtensionInfo $info Extension information.
-     */
+      /**
+       * Handle "resources" extension feature.
+       * @param ExtensionInfo $info Extension information.
+       */
     public function handleResources(ExtensionInfo $info)
     {
         foreach ($info->resources as $resource => $resInfo) {
@@ -131,9 +131,9 @@ class Assets extends LoadableModule
         return $css;
     }
 
-    /**
-     * Respond with all JavaScript assets in one file.
-     */
+      /**
+       * Respond with all JavaScript assets in one file.
+       */
     private function returnAppJs()
     {
         $text = '';
@@ -152,9 +152,9 @@ class Assets extends LoadableModule
         $this->m->Routing->respond($response);
     }
 
-    /**
-     * Respond with all CSS assets in one file.
-     */
+      /**
+       * Respond with all CSS assets in one file.
+       */
     private function returnAppCss()
     {
         $text = '';
@@ -172,11 +172,11 @@ class Assets extends LoadableModule
         $this->m->Routing->respond($response);
     }
 
-    /**
-     * Find an asset an return it to the client
-     * @param string $path Path to asset
-     * @return boolean False if file does not exist
-     */
+      /**
+       * Find an asset an return it to the client
+       * @param string $path Path to asset
+       * @return boolean False if file does not exist
+       */
     private function returnAsset($path)
     {
         if (file_exists($path)) {
@@ -187,10 +187,10 @@ class Assets extends LoadableModule
         return false;
     }
 
-    /**
-     * Find a dynamic asset an return it to the client.
-     * @return bool False if no asset found on path.
-     */
+      /**
+       * Find a dynamic asset an return it to the client.
+       * @return bool False if no asset found on path.
+       */
     public function findDynamicAsset()
     {
         $route = $this->m->Routing->route;
@@ -221,12 +221,12 @@ class Assets extends LoadableModule
         return false;
     }
 
-    /**
-     * Add additional asset dirs
-     * @param string $key Location-identifier
-     * @param string $path Dir path
-     * @param int $priority Priority
-     */
+      /**
+       * Add additional asset dirs
+       * @param string $key Location-identifier
+       * @param string $path Dir path
+       * @param int $priority Priority
+       */
     public function addAssetDir($key, $path, $priority = 5)
     {
         $this->sorted = false;
@@ -237,43 +237,43 @@ class Assets extends LoadableModule
         );
     }
 
-    /**
-     * Get asset dirs.
-     * @return array[] List of asset dirs as associative arrays (with key, path,
-     * and priority).
-     */
+      /**
+       * Get asset dirs.
+       * @return array[] List of asset dirs as associative arrays (with key, path,
+       * and priority).
+       */
     public function getAssetDirs()
     {
         return $this->assetDirs;
     }
 
-    /**
-     * Convert a path key to an asset key (converts backslashes to dashes).
-     * @param string $key Path key.
-     * @return string Asset key.
-     */
+      /**
+       * Convert a path key to an asset key (converts backslashes to dashes).
+       * @param string $key Path key.
+       * @return string Asset key.
+       */
     public function getAssetKey($key)
     {
         return str_replace('\\', '-', $key);
     }
 
-    /**
-     * Convert an asset key to a path key (converts dashes to backslashes).
-     * @param string $key Asset key.
-     * @return string Path key.
-     */
+      /**
+       * Convert an asset key to a path key (converts dashes to backslashes).
+       * @param string $key Asset key.
+       * @return string Path key.
+       */
     public function getPathKey($key)
     {
         return str_replace('-', '\\', $key);
     }
 
-    /**
-     * Get a link to an asset
-     * @param string $key Path key or path if second parameter undefined
-     * @param string $path Path to file, if undefined first parameter is used and
-     * key is set to 'assets'
-     * @return string A link to the asset
-     */
+      /**
+       * Get a link to an asset
+       * @param string $key Path key or path if second parameter undefined
+       * @param string $path Path to file, if undefined first parameter is used and
+       * key is set to 'assets'
+       * @return string A link to the asset
+       */
     public function getAsset($key, $path = null)
     {
         if (!isset($path)) {
@@ -299,12 +299,12 @@ class Assets extends LoadableModule
         return $this->getAssetUrl($key, $path);
     }
 
-    /**
-     * Get an asset url.
-     * @param string $key Path key.
-     * @param string $path Path.
-     * @return string Asset url.
-     */
+      /**
+       * Get an asset url.
+       * @param string $key Path key.
+       * @param string $path Path.
+       * @return string Asset url.
+       */
     private function getAssetUrl($key, $path)
     {
         $prefix = array('assets');
@@ -328,11 +328,11 @@ class Assets extends LoadableModule
         }
     }
 
-    /**
-     * Get link to a dynamic asset.
-     * @param array|Linkable|string|null $route A route, see {@see \Jivoo\Http\Routing}.
-     * @return string|null Link to asset, or null if not found.
-     */
+      /**
+       * Get link to a dynamic asset.
+       * @param array|Linkable|string|null $route A route, see {@see \Jivoo\Http\Routing}.
+       * @return string|null Link to asset, or null if not found.
+       */
     public function getDynamicAsset($route)
     {
         $route = $this->m->Routing->validateRoute($route);

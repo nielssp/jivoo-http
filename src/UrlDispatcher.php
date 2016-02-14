@@ -10,47 +10,47 @@ namespace Jivoo\Http;
  */
 class UrlDispatcher implements Dispatcher
 {
-  /**
-   * @var Routing Routing module.
-   */
+    /**
+     * @var Routing Routing module.
+     */
     private $routing;
   
-  /**
-   * Construct url dispatcher.
-   * @param Routing $routing Routing module.
-   */
+    /**
+     * Construct url dispatcher.
+     * @param Routing $routing Routing module.
+     */
     public function __construct(Routing $routing)
     {
         $this->routing = $routing;
     }
   
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function getPrefixes()
     {
         return array('http', 'https', 'url');
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function validate(&$route)
     {
         return isset($route['url']);
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function autoRoute(RoutingTable $table, $route, $resource = false)
     {
         return null;
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function toRoute($routeString)
     {
         if (strncmp($routeString, 'url:', 4) === 0) {
@@ -59,9 +59,9 @@ class UrlDispatcher implements Dispatcher
         return array('url' => $routeString);
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function fromRoute($route)
     {
         $url = $route['url'];
@@ -71,25 +71,25 @@ class UrlDispatcher implements Dispatcher
         return 'url:' . $url;
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function isCurrent($route)
     {
         return false;
     }
   
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function getPath($route, $path = null)
     {
         return $route['url'];
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function createDispatch($route)
     {
         return function () use ($route) {

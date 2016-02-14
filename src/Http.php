@@ -38,13 +38,13 @@ class Http
     {
     }
   
-  /**
-   * Redirect the user to another page.
-   *
-   * @param int $status HTTP status code, should be 3xx e.g. 301 for Moved Permanently.
-   * @param string $location The page to redirect to.
-   * @throws InvalidStatusException IF status code is undefined.
-   */
+    /**
+     * Redirect the user to another page.
+     *
+     * @param int $status HTTP status code, should be 3xx e.g. 301 for Moved Permanently.
+     * @param string $location The page to redirect to.
+     * @throws InvalidStatusException IF status code is undefined.
+     */
     public static function redirect($status, $location)
     {
         if (!Http::setStatus($status)) {
@@ -57,21 +57,21 @@ class Http
         exit();
     }
   
-  /**
-   * Set HTTP content type (and encoding)
-   * @param string $type Content type, e.g. 'text/html'.
-   * @param string $encoding Content encoding (charset), e.g. 'UTF-8'.
-   */
+    /**
+     * Set HTTP content type (and encoding)
+     * @param string $type Content type, e.g. 'text/html'.
+     * @param string $encoding Content encoding (charset), e.g. 'UTF-8'.
+     */
     public static function setContentType($type, $encoding = 'UTF-8')
     {
         header('Content-Type: ' . $type . '; charset=' . $encoding);
     }
   
-  /**
-   * Set HTTP status code.
-   * @param int $status Status code.
-   * @return boolean False if invalid/unknown/unimplemented code, true otherwise.
-   */
+    /**
+     * Set HTTP status code.
+     * @param int $status Status code.
+     * @return boolean False if invalid/unknown/unimplemented code, true otherwise.
+     */
     public static function setStatus($status)
     {
         $phrase = Http::statusPhrase($status);
@@ -82,11 +82,11 @@ class Http
         return true;
     }
   
-  /**
-   * Returns the phrase for a HTTP status code.
-   * @param int $status HTTP status code.
-   * @return string Phrase.
-   */
+    /**
+     * Returns the phrase for a HTTP status code.
+     * @param int $status HTTP status code.
+     * @return string Phrase.
+     */
     public static function statusPhrase($status)
     {
         switch ($status) {
@@ -138,17 +138,17 @@ class Http
         return false;
     }
   
-  /**
-   * Encode a query.
-   * @param string[] $query Query array.
-   * @param bool $associative If set to false the input
-   * <code>array('value1', 'value2', 'value3')</code> will result in the output
-   * string "value1&value2&value3", and any keys will be ignored. If set to true
-   * (the default) the above array will result in the output
-   * "0=value1&1=value2&2=value3" to match the format of PHP's global
-   * {@see $_GET}-array.
-   * @return string Query string without leading '?'.
-   */
+    /**
+     * Encode a query.
+     * @param string[] $query Query array.
+     * @param bool $associative If set to false the input
+     * <code>array('value1', 'value2', 'value3')</code> will result in the output
+     * string "value1&value2&value3", and any keys will be ignored. If set to true
+     * (the default) the above array will result in the output
+     * "0=value1&1=value2&2=value3" to match the format of PHP's global
+     * {@see $_GET}-array.
+     * @return string Query string without leading '?'.
+     */
     public static function encodeQuery(array $query, $associative = true)
     {
         $queryString = array();
@@ -172,17 +172,17 @@ class Http
         return implode('&', $queryString);
     }
   
-  /**
-   * Decode a query string.
-   * @param string $query Query string with or without leading '?'.
-   * @param bool $associative If set to false the function expects the query
-   * string to be of the form "value1&value2&value3" resulting in the output
-   * <code>array('value1', 'value2', 'value3')</code> (any keys will be
-   * ignored). If set to true (the default) the above string will result in the
-   * output: <code>array('value1' => '', 'value2' => '', 'value3' => '')</code>
-   * to match the format of PHP's global {@see $_GET}-array.
-   * @return string[] Query array.
-   */
+    /**
+     * Decode a query string.
+     * @param string $query Query string with or without leading '?'.
+     * @param bool $associative If set to false the function expects the query
+     * string to be of the form "value1&value2&value3" resulting in the output
+     * <code>array('value1', 'value2', 'value3')</code> (any keys will be
+     * ignored). If set to true (the default) the above string will result in the
+     * output: <code>array('value1' => '', 'value2' => '', 'value3' => '')</code>
+     * to match the format of PHP's global {@see $_GET}-array.
+     * @return string[] Query array.
+     */
     public static function decodeQuery($query, $associative = true)
     {
         if ($query == '' or $query == '?') {
@@ -215,20 +215,20 @@ class Http
         return $query;
     }
 
-  /**
-   * Format a date for use in HTTP headers.
-   * @param int $timestamp Time stamp.
-   * @return string Formatted date.
-   */
+    /**
+     * Format a date for use in HTTP headers.
+     * @param int $timestamp Time stamp.
+     * @return string Formatted date.
+     */
     public static function date($timestamp)
     {
         return gmdate('D, d M Y H:i:s', $timestamp) . ' GMT';
     }
   
-  /**
-   * Throw an exception if headers have already been sent and can't be changed.
-   * @throws HeadersSentException If headers already sent.
-   */
+    /**
+     * Throw an exception if headers have already been sent and can't be changed.
+     * @throws HeadersSentException If headers already sent.
+     */
     public static function assumeHeadersNotSent()
     {
         if (headers_sent($file, $line)) {

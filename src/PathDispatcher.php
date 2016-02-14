@@ -10,63 +10,63 @@ namespace Jivoo\Http;
  */
 class PathDispatcher implements Dispatcher
 {
-  /**
-   * @var Routing Routing module.
-   */
+    /**
+     * @var Routing Routing module.
+     */
     private $routing;
   
-  /**
-   * Construct url dispatcher.
-   * @param Routing $routing Routing module.
-   */
+    /**
+     * Construct url dispatcher.
+     * @param Routing $routing Routing module.
+     */
     public function __construct(Routing $routing)
     {
         $this->routing = $routing;
     }
   
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function getPrefixes()
     {
         return array('path');
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function validate(&$route)
     {
         return isset($route['path']);
     }
   
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function autoRoute(RoutingTable $table, $route, $resource = false)
     {
         return null;
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function toRoute($routeString)
     {
         return array('path' => explode('/', substr($routeString, 5)));
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function fromRoute($route)
     {
         return 'path:' . implode('/', $route['path']);
     }
   
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function isCurrent($route)
     {
         $request = $this->routing->request;
@@ -83,17 +83,17 @@ class PathDispatcher implements Dispatcher
         return $request->path == $route['path'];
     }
   
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function getPath($route, $path = null)
     {
         return $route['path'];
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function createDispatch($route)
     {
         return function () use ($route) {

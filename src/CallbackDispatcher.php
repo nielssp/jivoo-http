@@ -10,65 +10,65 @@ namespace Jivoo\Http;
  */
 class CallbackDispatcher implements Dispatcher
 {
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function getPrefixes()
     {
         return array('callback');
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function validate(&$route)
     {
         return isset($route['callback']);
     }
   
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function autoRoute(RoutingTable $table, $route, $resource = false)
     {
         return null;
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function toRoute($routeString)
     {
         return null;
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function fromRoute($route)
     {
         return '';
     }
   
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function isCurrent($route)
     {
         return false;
     }
   
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function getPath($route, $path = null)
     {
         return $route['path'];
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function createDispatch($route)
     {
         return $route['callback'];

@@ -77,54 +77,54 @@ use Jivoo\Core\Module;
  */
 class Routing extends Module
 {
-  /**
-   * @var DispatcherCollection Collection of dispatchers.
-   */
+    /**
+     * @var DispatcherCollection Collection of dispatchers.
+     */
     private $dispatchers;
   
-  /**
-   * @var RoutingTable Table of routes.
-   */
+    /**
+     * @var RoutingTable Table of routes.
+     */
     private $routes;
   
-  /**
-   * @var string[] Paths.
-   */
+    /**
+     * @var string[] Paths.
+     */
     private $paths = array();
   
-  /**
-   * @var callback[] Custom path functions.
-   */
+    /**
+     * @var callback[] Custom path functions.
+     */
     private $pathFunctions = array();
   
-  /**
-   * @var array Root route and priority.
-   */
+    /**
+     * @var array Root route and priority.
+     */
     private $root = null;
   
-  /**
-   * @var mixed Error route.
-   */
+    /**
+     * @var mixed Error route.
+     */
     private $error = null;
 
-  /**
-   * @var array Selected route and priority.
-   */
+    /**
+     * @var array Selected route and priority.
+     */
     private $selection = null;
 
-  /**
-   * @var bool Whether or not the page has rendered yet.
-   */
+    /**
+     * @var bool Whether or not the page has rendered yet.
+     */
     private $rendered = false;
 
-  /**
-   * @var bool Use etags.
-   */
+    /**
+     * @var bool Use etags.
+     */
     private $etags = false;
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     protected $events = array('beforeLoadRoutes', 'afterLoadRoutes',
     'beforeFindRoute', 'beforeRender', 'afterRender', 'beforeRedirect',
     'beforeDispatch', 'afterDispatch', 'beforeFollowRoute',
@@ -144,9 +144,9 @@ class Routing extends Module
         $this->routes = new RoutingTable($this);
     }
   
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     protected function init()
     {
         $this->m->Routing = $this;
@@ -203,9 +203,9 @@ class Routing extends Module
         }
     }
   
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function __get($property)
     {
         switch ($property) {
@@ -220,9 +220,9 @@ class Routing extends Module
         return parent::__get($property);
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function __isset($property)
     {
         switch ($property) {
@@ -237,9 +237,9 @@ class Routing extends Module
         return parent::__isset($property);
     }
   
-  /**
-   * Load routes from routing configuration file.
-   */
+    /**
+     * Load routes from routing configuration file.
+     */
     public function loadRoutes()
     {
         $this->triggerEvent('beforeLoadRoutes');
@@ -251,11 +251,11 @@ class Routing extends Module
         $this->triggerEvent('afterLoadRoutes');
     }
   
-  /**
-   * Set current route.
-   * @param array|Linkable|string|null $route A route, see {@see Routing}.
-   * @param number $priority Priority of route.
-   */
+    /**
+     * Set current route.
+     * @param array|Linkable|string|null $route A route, see {@see Routing}.
+     * @param number $priority Priority of route.
+     */
     public function setRoot($route, $priority = 9)
     {
         if (isset($this->root) and $priority <= $this->root['priority']) {
@@ -279,22 +279,22 @@ class Routing extends Module
         }
     }
   
-  /**
-   * Set error route.
-   * @param array|Linkable|string|null $route A route, see {@see Routing}.
-   */
+    /**
+     * Set error route.
+     * @param array|Linkable|string|null $route A route, see {@see Routing}.
+     */
     public function setError($route)
     {
         $this->error = $route;
         $this->setRoute($route, 1);
     }
 
-  /**
-   * Will replace **, :*, * and :n in path with parameters.
-   * @param mixed[] $parameters Parameters list.
-   * @param string[] $path Path array.
-   * @return string[] Resulting path.
-   */
+    /**
+     * Will replace **, :*, * and :n in path with parameters.
+     * @param mixed[] $parameters Parameters list.
+     * @param string[] $path Path array.
+     * @return string[] Resulting path.
+     */
     public static function insertParameters($parameters, $path)
     {
         $result = array();
@@ -321,26 +321,26 @@ class Routing extends Module
         return $result;
     }
 
-  /**
-   * Check whether or not a route matches the current request.
-   * @param array|Linkable|string|null $route A route, see {@see Routing}.
-   * @throws InvalidRouteException If route is not valid.
-   * @return boolean True if current route, false otherwise.
-   */
+    /**
+     * Check whether or not a route matches the current request.
+     * @param array|Linkable|string|null $route A route, see {@see Routing}.
+     * @throws InvalidRouteException If route is not valid.
+     * @return boolean True if current route, false otherwise.
+     */
     public function isCurrent($route = null)
     {
         $route = $this->validateRoute($route);
         return $route['dispatcher']->isCurrent($route);
     }
   
-  /**
-   * Get a URL from a path, query and fragment.
-   * @param string[] $path Path as array.
-   * @param array $query GET query.
-   * @param string $fragment Fragment.
-   * @param string $rewrite If true 'index.php/' will not be included in link.
-   * @return string A URL.
-   */
+    /**
+     * Get a URL from a path, query and fragment.
+     * @param string[] $path Path as array.
+     * @param array $query GET query.
+     * @param string $fragment Fragment.
+     * @param string $rewrite If true 'index.php/' will not be included in link.
+     * @return string A URL.
+     */
     public function getLinkFromPath($path = null, $query = null, $fragment = null, $rewrite = false)
     {
         if (!isset($path)) {
@@ -367,36 +367,36 @@ class Routing extends Module
         return $path;
     }
   
-  /**
-   * Merge two routes.
-   * @param array|Linkable|string|null $route A route, see {@see Routing}.
-   * @param array $mergeWith Route array to merge with.
-   * @param array Resulting route (as an array).
-   * @return array Merged route.
-   */
+    /**
+     * Merge two routes.
+     * @param array|Linkable|string|null $route A route, see {@see Routing}.
+     * @param array $mergeWith Route array to merge with.
+     * @param array Resulting route (as an array).
+     * @return array Merged route.
+     */
     public function mergeRoutes($route = null, $mergeWith = array())
     {
         $route = $this->validateRoute($route);
         return array_merge($route, $mergeWith);
     }
 
-  /**
-   * Validate route.
-   * @param array|Linkable|string|null $route A route, see {@see Routing}.
-   * @throws InvalidRouteException If invalid route.
-   * @return array A valid route array.
-   */
+    /**
+     * Validate route.
+     * @param array|Linkable|string|null $route A route, see {@see Routing}.
+     * @throws InvalidRouteException If invalid route.
+     * @return array A valid route array.
+     */
     public function validateRoute($route)
     {
         return $this->dispatchers->validate($route);
     }
   
-  /**
-   * Get a URL for a route (including http://domain.name).
-   * @param array|Linkable|string|null $route A route, see {@see Routing}.
-   * @throws InvalidRouteException If incomplete route.
-   * @return string A URL.
-   */
+    /**
+     * Get a URL for a route (including http://domain.name).
+     * @param array|Linkable|string|null $route A route, see {@see Routing}.
+     * @throws InvalidRouteException If incomplete route.
+     * @return string A URL.
+     */
     public function getUrl($route = null)
     {
         $link = $this->getLink($route);
@@ -406,11 +406,11 @@ class Routing extends Module
         return $this->request->domainName . $link;
     }
   
-  /**
-   * Get path for a validated route.
-   * @param array $route Route array.
-   * @return string[] A path array.
-   */
+    /**
+     * Get path for a validated route.
+     * @param array $route Route array.
+     * @return string[] A path array.
+     */
     private function getPathValidated($route)
     {
         if (isset($route['parameters'])) {
@@ -443,24 +443,24 @@ class Routing extends Module
         return $path;
     }
   
-  /**
-   * Get a link for a route (absolute path).
-   * @param array|Linkable|string|null $route A route, see {@see Routing}.
-   * @throws InvalidRouteException If no path found.
-   * @return string[] A path array.
-   */
+    /**
+     * Get a link for a route (absolute path).
+     * @param array|Linkable|string|null $route A route, see {@see Routing}.
+     * @throws InvalidRouteException If no path found.
+     * @return string[] A path array.
+     */
     public function getPath($route = null)
     {
         $route = $this->validateRoute($route);
         return $this->getPathValidated($route);
     }
   
-  /**
-   * Get a link for a route (absolute path).
-   * @param array|Linkable|string|null $route A route, see {@see Routing}.
-   * @throws InvalidRouteException If no path found.
-   * @return string A link.
-   */
+    /**
+     * Get a link for a route (absolute path).
+     * @param array|Linkable|string|null $route A route, see {@see Routing}.
+     * @throws InvalidRouteException If no path found.
+     * @return string A link.
+     */
     public function getLink($route = null)
     {
         $route = $this->validateRoute($route);
@@ -471,14 +471,14 @@ class Routing extends Module
         return $this->getLinkFromPath($path, $route['query'], $route['fragment']);
     }
   
-  /**
-   * Perform a redirect.
-   * @param string[] $path Path array.
-   * @param array $query GET query.
-   * @param string $moved Whether or not to use a 301 status code.
-   * @param string $fragment Fragment.
-   * @param string $rewrite If true 'index.php/' will not be included.
-   */
+    /**
+     * Perform a redirect.
+     * @param string[] $path Path array.
+     * @param array $query GET query.
+     * @param string $moved Whether or not to use a 301 status code.
+     * @param string $fragment Fragment.
+     * @param string $rewrite If true 'index.php/' will not be included.
+     */
     public function redirectPath(
         $path = null,
         $query = null,
@@ -495,31 +495,31 @@ class Routing extends Module
         Http::redirect($status, $this->getLinkFromPath($path, $query, $fragment));
     }
 
-  /**
-   * Perform a redirect.
-   * @param array|Linkable|string|null $route A route, see {@see Routing}.
-   */
+    /**
+     * Perform a redirect.
+     * @param array|Linkable|string|null $route A route, see {@see Routing}.
+     */
     public function redirect($route = null)
     {
         $this->triggerEvent('beforeRedirect', new RedirectEvent($this, $route, false));
         Http::redirect(Http::SEE_OTHER, $this->getLink($route));
     }
 
-  /**
-   * Perform a permanent redirect.
-   * @param array|Linkable|string|null $route A route, see {@see Routing}.
-   */
+    /**
+     * Perform a permanent redirect.
+     * @param array|Linkable|string|null $route A route, see {@see Routing}.
+     */
     public function moved($route = null)
     {
         $this->triggerEvent('beforeRedirect', new RedirectEvent($this, $route, true));
         Http::redirect(Http::MOVED_PERMANENTLY, $this->getLink($route));
     }
 
-  /**
-   * Refresh current page.
-   * @param array $query GET query, default is current.
-   * @param string $fragment Fragment, default is none.
-   */
+    /**
+     * Refresh current page.
+     * @param array $query GET query, default is current.
+     * @param string $fragment Fragment, default is none.
+     */
     public function refresh($query = null, $fragment = null)
     {
         if (!isset($query)) {
@@ -528,41 +528,41 @@ class Routing extends Module
         $this->redirectPath($this->request->path, $query, false, $fragment);
     }
   
-  /**
-   * Automatically create routes.
-   * @param array|Linkable|string|null $route A route, see {@see Routing}.
-   * @param bool $resource Whether to use resource routing.
-   */
+    /**
+     * Automatically create routes.
+     * @param array|Linkable|string|null $route A route, see {@see Routing}.
+     * @param bool $resource Whether to use resource routing.
+     */
     public function autoRoute($route, $resource = false)
     {
         $route = $this->validateRoute($route);
         $route['dispatcher']->autoRoute($this->routes, $route, $resource);
     }
   
-  /**
-   * Add a route/path combination. Set route if pattern matches current
-   * path.
-   *
-   * A pattern is a path such as 'admin/login'. Different placeholders can be
-   * used:
-   * * A '\*' can be used instead of a parameter. For instance if the path
-   *   'users/view/\*' is pointed at the UsersController and the view-action,
-   *   any string can be used in place of the asterisk, and the value will be
-   *   used as a parameter for the view-action. Multiple asterisks will be used
-   *   as multiple parameters.
-   * * A colon ':' followed by a number refers to a specific parameter, starting
-   *   from 0. The same example as above with a numbered parameter would be
-   *   'users/view/:0'.
-   * * The placeholders '**' and ':*' are identical, and results in the rest
-   *   of the path being put into parameters.
-   * * The placeholder ':controller' will set the controller, and ':action' will
-   *   set the action.
-   *
-   * @param string $pattern A path pattern.
-   * @param array|Linkable|string|null $route A route, see {@see Routing}.
-   * @param number $priority Priority of route.
-   * @throws InvalidRouteException If unknown placeholder.
-   */
+    /**
+     * Add a route/path combination. Set route if pattern matches current
+     * path.
+     *
+     * A pattern is a path such as 'admin/login'. Different placeholders can be
+     * used:
+     * * A '\*' can be used instead of a parameter. For instance if the path
+     *   'users/view/\*' is pointed at the UsersController and the view-action,
+     *   any string can be used in place of the asterisk, and the value will be
+     *   used as a parameter for the view-action. Multiple asterisks will be used
+     *   as multiple parameters.
+     * * A colon ':' followed by a number refers to a specific parameter, starting
+     *   from 0. The same example as above with a numbered parameter would be
+     *   'users/view/:0'.
+     * * The placeholders '**' and ':*' are identical, and results in the rest
+     *   of the path being put into parameters.
+     * * The placeholder ':controller' will set the controller, and ':action' will
+     *   set the action.
+     *
+     * @param string $pattern A path pattern.
+     * @param array|Linkable|string|null $route A route, see {@see Routing}.
+     * @param number $priority Priority of route.
+     * @throws InvalidRouteException If unknown placeholder.
+     */
     public function addRoute($pattern, $route, $priority = 5)
     {
         $route = $this->validateRoute($route);
@@ -642,14 +642,14 @@ class Routing extends Module
         $this->addPath($route, $pattern, $arity, $priority);
     }
 
-  /**
-   * Add association of route and path-pattern.
-   * @param array|Linkable|string|null $route A route, see {@see Routing}.
-   * @param string[] $pattern A pattern array.
-   * @param int|string $arity Arity of pattern (integer or '*').
-   * @param int $priority Priority of path.
-   * @return bool True if pattern added, false otherwise.
-   */
+    /**
+     * Add association of route and path-pattern.
+     * @param array|Linkable|string|null $route A route, see {@see Routing}.
+     * @param string[] $pattern A pattern array.
+     * @param int|string $arity Arity of pattern (integer or '*').
+     * @param int $priority Priority of path.
+     * @return bool True if pattern added, false otherwise.
+     */
     public function addPath($route, $pattern, $arity, $priority = 5)
     {
         $route = $this->validateRoute($route);
@@ -666,15 +666,15 @@ class Routing extends Module
         return true;
     }
   
-  /**
-   * Add association of route and path-function, i.e. override the dispatcher
-   * path function (see {@see Dispatcher::getPath()}) with a custom one.
-   * @param array|Linkable|string|null $route A route, see {@see Routing}.
-   * @param callback $function Path function.
-   * @param int|string $arity Arity of route, i.e. number of parameters (integer or '*').
-   * @param int $priority Priority of path function.
-   * @return bool True if pattern function added, false otherwise.
-   */
+    /**
+     * Add association of route and path-function, i.e. override the dispatcher
+     * path function (see {@see Dispatcher::getPath()}) with a custom one.
+     * @param array|Linkable|string|null $route A route, see {@see Routing}.
+     * @param callback $function Path function.
+     * @param int|string $arity Arity of route, i.e. number of parameters (integer or '*').
+     * @param int $priority Priority of path function.
+     * @return bool True if pattern function added, false otherwise.
+     */
     public function addPathFunction($route, $function, $arity, $priority = 5)
     {
         $route = $this->validateRoute($route);
@@ -696,13 +696,13 @@ class Routing extends Module
         return true;
     }
 
-  /**
-   * Set current route.
-   * @param array|Linkable|string|null $route A route, see {@see Routing}.
-   * @param int $priority Priority of route.
-   * @return boolean True if successful, false if a route with higher priority
-   * was previously set.
-   */
+    /**
+     * Set current route.
+     * @param array|Linkable|string|null $route A route, see {@see Routing}.
+     * @param int $priority Priority of route.
+     * @return boolean True if successful, false if a route with higher priority
+     * was previously set.
+     */
     public function setRoute($route, $priority = 7)
     {
         if ($this->rendered) {
@@ -717,10 +717,10 @@ class Routing extends Module
         return false;
     }
   
-  /**
-   * Find the best route and dispatch.
-   * @throws InvalidRouteException If no route selected.
-   */
+    /**
+     * Find the best route and dispatch.
+     * @throws InvalidRouteException If no route selected.
+     */
     public function findRoute()
     {
         $this->triggerEvent('beforeFindRoute');
@@ -732,12 +732,12 @@ class Routing extends Module
         $this->followRoute($this->selection);
     }
 
-  /**
-   * Follow a route.
-   * @param array|Linkable|string|null $route A route, see {@see Routing}.
-   * @param int $status HTTP status code override.
-   * @throws InvalidRouteException If route is invalid.
-   */
+    /**
+     * Follow a route.
+     * @param array|Linkable|string|null $route A route, see {@see Routing}.
+     * @param int $status HTTP status code override.
+     * @throws InvalidRouteException If route is invalid.
+     */
     public function followRoute($route, $status = null)
     {
         $route = $this->validateRoute($route);
@@ -781,12 +781,12 @@ class Routing extends Module
         $this->respond($response, $status);
     }
   
-  /**
-   * Converts strings and arrays to valid response objects.
-   * @param string|array|Response $response A response to convert.
-   * @param string $defaultType Default type for
-   * @return Response|null A valid response object or null if invalid.
-   */
+    /**
+     * Converts strings and arrays to valid response objects.
+     * @param string|array|Response $response A response to convert.
+     * @param string $defaultType Default type for
+     * @return Response|null A valid response object or null if invalid.
+     */
     public function validateResponse($response, $defaultType = 'html')
     {
         if (is_string($response)) {
@@ -809,14 +809,14 @@ class Routing extends Module
         return null;
     }
   
-  /**
-   * Create a response from a dispatch function.
-   * @param callable $function Dispatch function returning a {@see Response} or
-   * a string.
-   * @param mixed $args,... Additional parameters for function.
-   * @throws InvalidResponseException If response is invalid.
-   * @return Response Response object.
-   */
+    /**
+     * Create a response from a dispatch function.
+     * @param callable $function Dispatch function returning a {@see Response} or
+     * a string.
+     * @param mixed $args,... Additional parameters for function.
+     * @throws InvalidResponseException If response is invalid.
+     * @return Response Response object.
+     */
     public function dispatch($function)
     {
         $args = func_get_args();
@@ -836,11 +836,11 @@ class Routing extends Module
         return $response;
     }
 
-  /**
-   * Sends a response to the client and stops execution of the applicaton.
-   * @param Response $response Response object.
-   * @param int $status HTTP status code override.
-   */
+    /**
+     * Sends a response to the client and stops execution of the applicaton.
+     * @param Response $response Response object.
+     * @param int $status HTTP status code override.
+     */
     public function respond(Response $response, $status = null)
     {
         if (headers_sent($file, $line)) {
@@ -906,11 +906,11 @@ class Routing extends Module
         $this->app->stop();
     }
 
-  /**
-   * Make sure that the current path matches the controller and action. If not,
-   * redirect to the right path.
-   * @param array|Linkable|string|null $route A route, see {@see Routing}.
-   */
+    /**
+     * Make sure that the current path matches the controller and action. If not,
+     * redirect to the right path.
+     * @param array|Linkable|string|null $route A route, see {@see Routing}.
+     */
     public function reroute($route = null)
     {
         $currentPath = $this->request->path;

@@ -10,9 +10,9 @@ namespace Jivoo\Http;
  */
 interface Linkable
 {
-  /**
-   * Get a route.
-   * @return string|array|Linkable|null A route, see {@see Routing}.
-   */
+    /**
+     * Get a route.
+     * @return string|array|Linkable|null A route, see {@see Routing}.
+     */
     public function getRoute();
 }

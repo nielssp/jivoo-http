@@ -14,15 +14,15 @@ use Jivoo\Http\Http;
  */
 class AssetResponse extends Response
 {
-  /**
-   * @var string File path.
-   */
+    /**
+     * @var string File path.
+     */
     private $file;
 
-  /**
-   * Construct asset response.
-   * @param string $file Path to asset.
-   */
+    /**
+     * Construct asset response.
+     * @param string $file Path to asset.
+     */
     public function __construct($file)
     {
         parent::__construct(Http::OK, Utilities::getContentType($file));
@@ -30,9 +30,9 @@ class AssetResponse extends Response
         $this->modified = filemtime($file);
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function getBody()
     {
         return file_get_contents($this->file);
