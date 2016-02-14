@@ -8,11 +8,12 @@ namespace Jivoo\Http;
 /**
  * An HTTP response containing text.
  */
-class TextResponse extends Response {
+class TextResponse extends Response
+{
   /**
    * @var string Text.
    */
-  private $text;
+    private $text;
 
   /**
    * Construct text response.
@@ -20,15 +21,17 @@ class TextResponse extends Response {
    * @param string $type Response type.
    * @param string $text Response body.
    */
-  public function __construct($status, $type, $text) {
-    parent::__construct($status, $type);
-    $this->text = $text;
-  }
+    public function __construct($status, $type, $text)
+    {
+        parent::__construct($status, $type);
+        $this->text = $text;
+    }
 
   /**
    * {@inheritdoc}
    */
-  public function getBody() {
-    return $this->text;
-  }
+    public function getBody()
+    {
+        return $this->text;
+    }
 }

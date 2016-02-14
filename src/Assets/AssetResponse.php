@@ -12,27 +12,29 @@ use Jivoo\Http\Http;
 /**
  * Responds with the content of an asset.
  */
-class AssetResponse extends Response {
+class AssetResponse extends Response
+{
   /**
    * @var string File path.
    */
-  private $file;
+    private $file;
 
   /**
    * Construct asset response.
    * @param string $file Path to asset.
    */
-  public function __construct($file) {
-    parent::__construct(Http::OK, Utilities::getContentType($file));
-    $this->file = $file;
-    $this->modified = filemtime($file);
-  }
+    public function __construct($file)
+    {
+        parent::__construct(Http::OK, Utilities::getContentType($file));
+        $this->file = $file;
+        $this->modified = filemtime($file);
+    }
 
   /**
    * {@inheritdoc}
    */
-  public function getBody() {
-    return file_get_contents($this->file);
-  }
-
+    public function getBody()
+    {
+        return file_get_contents($this->file);
+    }
 }

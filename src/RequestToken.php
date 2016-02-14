@@ -5,6 +5,7 @@
 // See the LICENSE file or http://opensource.org/licenses/MIT for more information.
 namespace Jivoo\Http;
 
-interface RequestToken {
-  public function getToken();
+interface RequestToken
+{
+    public function getToken();
 }

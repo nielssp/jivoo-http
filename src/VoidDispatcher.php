@@ -8,60 +8,69 @@ namespace Jivoo\Http;
 /**
  * A dummy dispatcher that handles 'void:' routes.
  */
-class VoidDispatcher implements Dispatcher {
+class VoidDispatcher implements Dispatcher
+{
   /**
    * {@inheritdoc}
    */
-  public function getPrefixes() {
-    return array('void');
-  }
+    public function getPrefixes()
+    {
+        return array('void');
+    }
 
   /**
    * {@inheritdoc}
    */
-  public function validate(&$route) {
-    return isset($route['void']);
-  }
+    public function validate(&$route)
+    {
+        return isset($route['void']);
+    }
 
   /**
    * {@inheritdoc}
    */
-  public function autoRoute(RoutingTable $table, $route, $resource = false) {
-    return null;
-  }
+    public function autoRoute(RoutingTable $table, $route, $resource = false)
+    {
+        return null;
+    }
 
   /**
    * {@inheritdoc}
    */
-  public function toRoute($routeString) {
-    return array('void' => true);
-  }
+    public function toRoute($routeString)
+    {
+        return array('void' => true);
+    }
 
   /**
    * {@inheritdoc}
    */
-  public function fromRoute($route) {
-    return 'void:';
-  }
+    public function fromRoute($route)
+    {
+        return 'void:';
+    }
 
   /**
    * {@inheritdoc}
    */
-  public function isCurrent($route) {
-    return false;
-  }
+    public function isCurrent($route)
+    {
+        return false;
+    }
   
   /**
    * {@inheritdoc}
    */
-  public function getPath($route, $path = null) {
-    return '';
-  }
+    public function getPath($route, $path = null)
+    {
+        return '';
+    }
 
   /**
    * {@inheritdoc}
    */
-  public function createDispatch($route) {
-    throw new InvalidRouteException(tr('Trying to dispatch void route.'));
-  }
+    public function createDispatch($route)
+    {
+        throw new InvalidRouteException(tr('Trying to dispatch void route.'));
+    }
 }

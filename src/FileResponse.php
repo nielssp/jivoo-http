@@ -8,11 +8,12 @@ namespace Jivoo\Http;
 /**
  * Responds with the content of a file.
  */
-class FileResponse extends Response {
+class FileResponse extends Response
+{
   /**
    * @var string File path.
    */
-  private $file;
+    private $file;
 
   /**
    * Construct file response.
@@ -20,16 +21,18 @@ class FileResponse extends Response {
    * @param string $type Response content type.
    * @param string $file File path.
    */
-  public function __construct($status, $type, $file) {
-    parent::__construct($status, $type);
-    $this->file = $file;
-  }
+    public function __construct($status, $type, $file)
+    {
+        parent::__construct($status, $type);
+        $this->file = $file;
+    }
 
   /**
    * {@inheritdoc}
    */
-  public function getBody() {
-    // TODO readfile() .. e.g. don't buffer output for big files
-    return file_get_contents($this->file);
-  }
+    public function getBody()
+    {
+      // TODO readfile() .. e.g. don't buffer output for big files
+        return file_get_contents($this->file);
+    }
 }

@@ -8,5 +8,6 @@ namespace Jivoo\Http;
 /**
  * Not implemented.
  */
-class RedirectResponse extends Response {
+class RedirectResponse extends Response
+{
 }
