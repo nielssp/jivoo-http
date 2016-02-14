@@ -3,7 +3,7 @@
 // Copyright (c) 2015 Niels Sonnich Poulsen (http://nielssp.dk)
 // Licensed under the MIT license.
 // See the LICENSE file or http://opensource.org/licenses/MIT for more information.
-namespace Jivoo\Routing;
+namespace Jivoo\Http;
 
 use Jivoo\Core\AppListener;
 
@@ -15,8 +15,8 @@ abstract class AppRouter extends AppListener {
    * {@inheritdoc}
    */
   protected $handlers = array(
-    'Jivoo\Routing\Routing.beforeLoadRoutes',
-    'Jivoo\Routing\Routing.afterLoadRoutes'
+    'Jivoo\Http\Routing.beforeLoadRoutes',
+    'Jivoo\Http\Routing.afterLoadRoutes'
   );
 
   /**

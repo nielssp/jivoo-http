@@ -3,11 +3,11 @@
 // Copyright (c) 2015 Niels Sonnich Poulsen (http://nielssp.dk)
 // Licensed under the MIT license.
 // See the LICENSE file or http://opensource.org/licenses/MIT for more information.
-namespace Jivoo\Assets;
+namespace Jivoo\Http\Assets;
 
 use Jivoo\Core\Utilities;
-use Jivoo\Routing\Response;
-use Jivoo\Routing\Http;
+use Jivoo\Http\Response;
+use Jivoo\Http\Http;
 
 /**
  * Responds with the content of an asset.

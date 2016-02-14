@@ -3,14 +3,14 @@
 // Copyright (c) 2015 Niels Sonnich Poulsen (http://nielssp.dk)
 // Licensed under the MIT license.
 // See the LICENSE file or http://opensource.org/licenses/MIT for more information.
-namespace Jivoo\Assets;
+namespace Jivoo\Http\Assets;
 
 use Jivoo\Core\LoadableModule;
 use Jivoo\Core\Utilities;
-use Jivoo\Routing\TextResponse;
-use Jivoo\Routing\Http;
+use Jivoo\Http\TextResponse;
+use Jivoo\Http\Http;
 use Jivoo\Extensions\ExtensionInfo;
-use Jivoo\Routing\InvalidRouteException;
+use Jivoo\Http\InvalidRouteException;
 use Jivoo\Controllers\ActionDispatcher;
 use Jivoo\Snippets\SnippetDispatcher;
 
@@ -308,7 +308,7 @@ class Assets extends LoadableModule {
   
   /**
    * Get link to a dynamic asset.
-   * @param array|Linkable|string|null $route A route, see {@see \Jivoo\Routing\Routing}. 
+   * @param array|Linkable|string|null $route A route, see {@see \Jivoo\Http\Routing}. 
    * @return string|null Link to asset, or null if not found.
    */
   public function getDynamicAsset($route) {

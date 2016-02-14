@@ -1,6 +1,5 @@
 <?php
-
-namespace Jivoo\Routing;
+namespace Jivoo\Http;
 
 class HttpTest extends \Jivoo\TestCase {
 
