@@ -12,7 +12,7 @@ class Request extends Message implements \Psr\Http\Message\RequestInterface
 {
     private $method = 'GET';
     
-    private $requestTarget = '/';
+    private $requestTarget = '';
     
     private $uri;
     
@@ -33,7 +33,18 @@ class Request extends Message implements \Psr\Http\Message\RequestInterface
 
     public function getRequestTarget()
     {
-        return $this->requestTarget;
+        if ($this->requestTarget != '') {
+            return $this->requestTarget;
+        }
+        $target = $this->uri->getPath();
+        if ($target == '') {
+            $target = '/';
+        }
+        $query = $this->uri->getQuery();
+        if ($query != '') {
+            $target .= '?' . $query;
+        }
+        return $target;
     }
 
     public function getUri()
