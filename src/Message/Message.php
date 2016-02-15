@@ -46,8 +46,8 @@ class Message implements \Psr\Http\Message\MessageInterface
         if (! is_array($value)) {
             $value = [$value];
         }
-        $message->headers[$name] = $value;
-        $message->headerKeys[strtolower($name)] = $name;
+        $this->headers[$name] = $value;
+        $this->headerKeys[strtolower($name)] = $name;
     }
 
     public function getHeader($name)
@@ -61,7 +61,7 @@ class Message implements \Psr\Http\Message\MessageInterface
 
     public function getHeaderLine($name)
     {
-        return implode(',', $this->getHeader($name));
+        return implode(', ', $this->getHeader($name));
     }
 
     public function getHeaders()
@@ -76,17 +76,18 @@ class Message implements \Psr\Http\Message\MessageInterface
 
     public function hasHeader($name)
     {
-        return isset($this->headersKeys[strtolower($name)]);
+        return isset($this->headerKeys[strtolower($name)]);
     }
 
     public function withAddedHeader($name, $value)
     {
         $message = clone $this;
-        if (!isset($message->headers[$name])) {
+        $key = strtolower($name);
+        if (! isset($message->headerKeys[$key])) {
             $message->headers[$name] = [];
-            $message->headerKeys[strtolower($name)] = $name;
+            $message->headerKeys[$key] = $name;
         }
-        $message->headers[$name][] = $value;
+        $message->headers[$message->headerKeys[$key]][] = $value;
         return $message;
     }
 
