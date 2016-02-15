@@ -13,8 +13,15 @@ class Request extends Message implements \Psr\Http\Message\ServerRequestInterfac
 
     use RequestTrait, ServerRequestTrait;
     
-    public function __construct(Uri $uri, $method = 'GET', $query = [], $data = [], $cookies = [], $files = [], $server = [])
-    {
+    public function __construct(
+        Uri $uri,
+        $method = 'GET',
+        $query = [],
+        $data = [],
+        $cookies = [],
+        $files = [],
+        $server = []
+    ) {
         parent::__construct(new StringStream(''));
         $this->uri = $uri;
         $host = $uri->getHost();
@@ -33,7 +40,15 @@ class Request extends Message implements \Psr\Http\Message\ServerRequestInterfac
     {
         $uri = new Uri((string) filter_input(INPUT_SERVER, 'REQUEST_URI'));
         $method = (string) filter_input(INPUT_SERVER, 'REQUEST_METHOD');
-        $request = new self($uri, $method, $_GET, $_POST, $_COOKIE, \Jivoo\Http\UploadedFile::convert($_FILES), $_SERVER);
+        $request = new self(
+            $uri,
+            $method,
+            $_GET,
+            $_POST,
+            $_COOKIE,
+            \Jivoo\Http\UploadedFile::convert($_FILES),
+            $_SERVER
+        );
         return $request;
     }
     
