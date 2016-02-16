@@ -38,8 +38,8 @@ class Request extends Message implements \Psr\Http\Message\ServerRequestInterfac
     
     public static function createGlobal()
     {
-        $uri = new Uri((string) filter_input(INPUT_SERVER, 'REQUEST_URI'));
-        $method = (string) filter_input(INPUT_SERVER, 'REQUEST_METHOD');
+        $uri = new Uri(isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '');
+        $method = isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'GET';
         $request = new self(
             $uri,
             $method,

@@ -25,6 +25,7 @@ class StringStream implements \Psr\Http\Message\StreamInterface
     
     public function __toString()
     {
+        $this->offset = $this->length;
         return $this->string;
     }
 
@@ -46,7 +47,7 @@ class StringStream implements \Psr\Http\Message\StreamInterface
 
     public function getContents()
     {
-        return substr($this->string, $this->offset);
+        return $this->read($this->length - $this->offset);
     }
 
     public function getMetadata($key = null)
@@ -64,23 +65,23 @@ class StringStream implements \Psr\Http\Message\StreamInterface
 
     public function isReadable()
     {
-        return true;
+        return isset($this->string);
     }
 
     public function isSeekable()
     {
-        return true;
+        return isset($this->string);
     }
 
     public function isWritable()
     {
-        return true;
+        return isset($this->string);
     }
 
     public function read($length)
     {
-        $data = substr($string, $this->offset, $length);
-        $this->offset = $this->length + strlne($data);
+        $data = substr($this->string, $this->offset, $length);
+        $this->offset += strlen($data);
         return $data;
     }
 
@@ -112,10 +113,9 @@ class StringStream implements \Psr\Http\Message\StreamInterface
     public function write($string)
     {
         $length = strlen($string);
-        $this->string = substr($this->string, 0, $this->offset)
-            . $string . substr($this->string, $this->offset);
+        $this->string = substr_replace($this->string, $string, $this->offset, $length);
         $this->offset += $length;
-        $this->length += $length;
+        $this->length = strlen($this->string);
         return $length;
     }
 }
