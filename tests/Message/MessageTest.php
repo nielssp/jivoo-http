@@ -13,8 +13,10 @@ class MessageTest extends \Jivoo\TestCase
         $message1 = $this->getInstance();
         
         $this->assertFalse($message1->hasHeader('foo'));
+        $this->assertFalse($message1->hasHeader('baz'));
+        $this->assertEmpty($message1->getHeaders());
         
-        $message2 = $message1->withHeader('Foo', 'bar');
+        $message2 = $message1->withHeader('Foo', 'bar')->withAddedHeader('baz', 'foo');
         
         $this->assertTrue($message2->hasHeader('foo'));
         $this->assertTrue($message2->hasHeader('Foo'));
@@ -24,13 +26,15 @@ class MessageTest extends \Jivoo\TestCase
         $this->assertEquals(['bar'], $message2->getHeader('foo'));
         $this->assertEquals(['bar'], $message2->getHeader('Foo'));
         $this->assertEquals('bar', $message2->getHeaderLine('foo'));
+        $this->assertEquals('foo', $message2->getHeaderLine('baz'));
+        $this->assertArrayHasKey('Foo', $message2->getHeaders());
         
         $message3 = $message2->withAddedHeader('FOO', 'baz');
         $this->assertTrue($message3->hasHeader('Foo'));
         $this->assertEquals(['bar', 'baz'], $message3->getHeader('Foo'));
         $this->assertEquals('bar, baz', $message3->getHeaderLine('foo'));
         
-        $message4 = $message3->withoutHeader('foo');
+        $message4 = $message3->withoutHeader('foo')->withoutHeader('bar');
         
         $this->assertFalse($message4->hasHeader('foo'));
         $this->assertEquals([], $message4->getHeader('Foo'));

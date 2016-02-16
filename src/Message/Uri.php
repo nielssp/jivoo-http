@@ -160,7 +160,7 @@ class Uri implements \Psr\Http\Message\UriInterface
     public function withPath($path)
     {
         $uri = clone $this;
-        $uri->path = strtolower(urlencode(urldecode($path)));
+        $uri->path = strtolower($path);
         return $uri;
     }
 
@@ -175,7 +175,7 @@ class Uri implements \Psr\Http\Message\UriInterface
     public function withQuery($query)
     {
         $uri = clone $this;
-        $uri->query = urlencode(urldecode($query));
+        $uri->query = $query;
         return $uri;
     }
 
