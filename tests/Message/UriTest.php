@@ -69,5 +69,4 @@ class UriTest extends \Jivoo\TestCase
         $this->assertEquals('a=2&b=3', $uri2->getQuery());
         $this->assertEquals('foobar', $uri2->getFragment());
     }
-    
 }
