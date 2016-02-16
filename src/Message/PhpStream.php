@@ -57,7 +57,8 @@ class PhpStream implements \Psr\Http\Message\StreamInterface
 
     public function getSize()
     {
-        return null;
+        $stat = fstat($this->stream);
+        return $stat['size'];
     }
 
     public function isReadable()

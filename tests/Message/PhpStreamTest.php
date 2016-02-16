@@ -30,7 +30,7 @@ class PhpStreamTest extends \Jivoo\TestCase
         $this->stream->rewind();
         $this->assertEquals('foobar', $this->stream->getContents());
         $this->stream->rewind();
-        $this->assertNull($this->stream->getSize());
+        $this->assertEquals(6, $this->stream->getSize());
         $this->assertEquals('foo', $this->stream->read(3));
         $this->assertEquals('bar', $this->stream->read(5));
         $this->assertTrue($this->stream->eof());
@@ -57,6 +57,6 @@ class PhpStreamTest extends \Jivoo\TestCase
         $this->assertEquals(4, $this->stream->write('bazz'));
         $this->assertEquals('', $this->stream->getContents());
         $this->assertEquals('foobazz', $this->stream);
-        $this->assertNull($this->stream->getSize());
+        $this->assertEquals(7, $this->stream->getSize());
     }
 }
