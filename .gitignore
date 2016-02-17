@@ -1,0 +1,8 @@
+*.swp
+*~
+/nbproject
+/doc
+/build
+/tests/_output
+/vendor/*
+/nbproject/private/
