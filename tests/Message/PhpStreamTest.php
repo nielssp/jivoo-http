@@ -63,7 +63,7 @@ class PhpStreamTest extends \Jivoo\TestCase
     public function testErrorHandling()
     {
         $this->assertThrows('Jivoo\InvalidArgumentException', function () {
-            new PhpStream('php://foobar');
+            new PhpStream('not/a/file');
         });
         $this->stream->close();
         $this->assertEquals('', $this->stream);
