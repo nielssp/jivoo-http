@@ -3,9 +3,7 @@
 // Copyright (c) 2015 Niels Sonnich Poulsen (http://nielssp.dk)
 // Licensed under the MIT license.
 // See the LICENSE file or http://opensource.org/licenses/MIT for more information.
-namespace Jivoo\Http;
-
-use Jivoo\InvalidPropertException;
+namespace Jivoo\Http\Message;
 
 class UploadedFile implements \Psr\Http\Message\UploadedFileInterface
 {
@@ -14,6 +12,7 @@ class UploadedFile implements \Psr\Http\Message\UploadedFileInterface
     private $type;
     private $size;
     private $error;
+    private $stream = null;
   
     public function __construct($file, $offset = null)
     {
@@ -58,13 +57,25 @@ class UploadedFile implements \Psr\Http\Message\UploadedFileInterface
   
     public function moveTo($path)
     {
-        if (!isset($this->tmpName)) {
+        if (! isset($this->tmpName)) {
             throw new UploadException('File already moved');
         }
-        if (!is_uploaded_file($this->tmpName)) {
+        if (! is_uploaded_file($this->tmpName)) {
             throw new UploadException('Not an uploaded file');
         }
-        if (!move_uploaded_file($this->tmpName, $path)) {
+        if (PHP_SAPI == 'cli' or PHP_SAPI == '') {
+            $dest = fopen($path, 'wb+');
+            if (! $dest) {
+                throw new UploadException('Could not move file');
+            }
+            $stream = $this->getStream();
+            $stream->rewind();
+            while (! $stream->eof()) {
+                fwrite($dest, $stream->read(8192));
+            }
+            $stream->close();
+            fclose($dest);
+        } elseif (! move_uploaded_file($this->tmpName, $path)) {
             throw new UploadException('Could not move file');
         }
         $this->tmpName = null;
@@ -116,6 +127,12 @@ class UploadedFile implements \Psr\Http\Message\UploadedFileInterface
 
     public function getStream()
     {
-        // TODO
+        if (! isset($this->tmpName)) {
+            throw new UploadException('File already moved');
+        }
+        if (! isset($this->stream)) {
+            $this->stream = new PhpStream($this->tmpName, 'rb');
+        }
+        return $this->stream;
     }
 }

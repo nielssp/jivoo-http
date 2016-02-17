@@ -50,10 +50,10 @@ class Response extends Message implements \Psr\Http\Message\ResponseInterface
         return $response;
     }
     
-    public static function redirect($location, $moved = false)
+    public static function redirect($location, $permanent = false)
     {
         $response = new self(
-            $moved ? Status::MOVED_PERMANENTLY : Status::SEE_OTHER,
+            $permanent ? Status::MOVED_PERMANENTLY : Status::SEE_OTHER,
             new StringStream('')
         );
         $response->setHeader('Location', $location);

@@ -137,10 +137,8 @@ class PhpStream implements StreamInterface
         if (! isset($this->stream)) {
             return false;
         }
-        return in_array(
-            $this->getMetadata('mode'),
-            ['r', 'r+', 'w+', 'a+', 'x+', 'c+']
-        );
+        $mode = $this->getMetadata('mode');
+        return strpos($mode, 'r') !== false or strpos($mode, '+') !== false;
     }
 
     /**
@@ -162,10 +160,10 @@ class PhpStream implements StreamInterface
         if (! isset($this->stream)) {
             return false;
         }
-        return in_array(
-            $this->getMetadata('mode'),
-            ['w', 'r+', 'w+', 'c', 'a', 'x', 'a+', 'x+', 'c+']
-        );
+        $mode = $this->getMetadata('mode');
+        return strpos($mode, 'w') !== false or strpos($mode, '+') !== false
+            or strpos($mode, 'c') !== false or strpos($mode, 'a') !== false
+            or strpos($mode, 'x') !== false;
     }
 
     /**

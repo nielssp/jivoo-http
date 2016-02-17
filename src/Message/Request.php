@@ -46,7 +46,7 @@ class Request extends Message implements \Psr\Http\Message\ServerRequestInterfac
             $_GET,
             $_POST,
             $_COOKIE,
-            \Jivoo\Http\UploadedFile::convert($_FILES),
+            UploadedFile::convert($_FILES),
             $_SERVER
         );
         return $request;

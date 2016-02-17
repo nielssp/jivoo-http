@@ -29,7 +29,7 @@ class ServerRequestTraitTest extends \Jivoo\TestCase
     
     public function testGettersAndSetters()
     {
-        $file = new \Jivoo\Http\UploadedFile([
+        $file = new UploadedFile([
             'tmp_name' => 'foo',
             'name' => 'foo',
             'type' => 'text/plain',

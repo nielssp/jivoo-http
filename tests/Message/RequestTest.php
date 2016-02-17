@@ -44,7 +44,7 @@ class RequestTest extends MessageTest
         $this->assertEquals($_SERVER, $request3->getServerParams());
         $this->assertArrayHasKey('form', $request3->getUploadedFiles());
         $this->assertCount(2, $request3->getUploadedFiles()['form']['files']);
-        $this->assertInstanceOf('Jivoo\Http\UploadedFile', $request3->getUploadedFiles()['form']['files'][0]);
-        $this->assertInstanceOf('Jivoo\Http\UploadedFile', $request3->getUploadedFiles()['form']['files'][1]);
+        $this->assertInstanceOf('Jivoo\Http\Message\UploadedFile', $request3->getUploadedFiles()['form']['files'][0]);
+        $this->assertInstanceOf('Jivoo\Http\Message\UploadedFile', $request3->getUploadedFiles()['form']['files'][1]);
     }
 }
