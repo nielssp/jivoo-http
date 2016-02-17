@@ -31,6 +31,10 @@ class Message implements \Psr\Http\Message\MessageInterface
      */
     private $body;
     
+    /**
+     *
+     * @param \Psr\Http\Message\StreamInterface $body
+     */
     public function __construct(\Psr\Http\Message\StreamInterface $body)
     {
         $this->body = $body;

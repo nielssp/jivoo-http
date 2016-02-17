@@ -59,4 +59,32 @@ class PhpStreamTest extends \Jivoo\TestCase
         $this->assertEquals('foobazz', $this->stream);
         $this->assertEquals(7, $this->stream->getSize());
     }
+    
+    public function testErrorHandling()
+    {
+        $this->assertThrows('Jivoo\InvalidArgumentException', function () {
+            new PhpStream('php://foobar');
+        });
+        $this->stream->close();
+        $this->assertEquals('', $this->stream);
+        $this->assertTrue($this->stream->eof());
+        $this->assertEquals('', $this->stream->getContents());
+        $this->assertEquals([], $this->stream->getMetadata());
+        $this->assertNull($this->stream->getSize());
+        $this->assertFalse($this->stream->isReadable());
+        $this->assertFalse($this->stream->isWritable());
+        $this->assertFalse($this->stream->isSeekable());
+        $this->assertThrows('Jivoo\Http\Message\StreamException', function () {
+            $this->stream->read(5);
+        });
+        $this->assertThrows('Jivoo\Http\Message\StreamException', function () {
+            $this->stream->seek(5);
+        });
+        $this->assertThrows('Jivoo\Http\Message\StreamException', function () {
+            $this->stream->tell();
+        });
+        $this->assertThrows('Jivoo\Http\Message\StreamException', function () {
+            $this->stream->write('foo');
+        });
+    }
 }

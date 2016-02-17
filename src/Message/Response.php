@@ -14,8 +14,16 @@ class Response extends Message implements \Psr\Http\Message\ResponseInterface
     
     private $reason = 'OK';
     
-    public function __construct($status, \Psr\Http\Message\StreamInterface $body)
+    /**
+     *
+     * @param type $status
+     * @param string|resource|\Psr\Http\Message\StreamInterface $body
+     */
+    public function __construct($status, $body = 'php://memory')
     {
+        if (! ($body instanceof \Psr\Http\Message\StreamInterface)) {
+            $body = new PhpStream($body, 'wb+');
+        }
         parent::__construct($body);
         $this->status = $status;
         $this->reason = Status::phrase($status);

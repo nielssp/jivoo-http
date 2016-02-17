@@ -22,7 +22,7 @@ class Request extends Message implements \Psr\Http\Message\ServerRequestInterfac
         $files = [],
         $server = []
     ) {
-        parent::__construct(new StringStream(''));
+        parent::__construct(new PhpStream('php://input', 'r'));
         $this->uri = $uri;
         $host = $uri->getHost();
         if ($host != '') {

@@ -15,12 +15,15 @@ class StringStream implements \Psr\Http\Message\StreamInterface
     
     private $length;
     
+    private $mutable;
+    
     private $offset = 0;
     
-    public function __construct($string)
+    public function __construct($string, $mutable = true)
     {
         $this->string = $string;
         $this->length = strlen($string);
+        $this->mutable = $mutable;
     }
     
     public function __toString()
@@ -75,7 +78,7 @@ class StringStream implements \Psr\Http\Message\StreamInterface
 
     public function isWritable()
     {
-        return isset($this->string);
+        return isset($this->string) and $this->mutable;
     }
 
     public function read($length)
