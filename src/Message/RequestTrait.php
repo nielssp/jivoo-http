@@ -6,7 +6,7 @@
 namespace Jivoo\Http\Message;
 
 /**
- * Implements {@see \Psr\Http\Message\RequestInterface
+ * Implements {@see \Psr\Http\Message\RequestInterface}.
  */
 trait RequestTrait
 {

@@ -10,29 +10,41 @@ class ResponseTest extends MessageTest
     
     public function testStatus()
     {
-        $request1 = $this->getInstance()->withStatus(404);
+        $response1 = $this->getInstance()->withStatus(404);
         
-        $this->assertEquals(404, $request1->getStatusCode());
-        $this->assertEquals('Not Found', $request1->getReasonPhrase());
+        $this->assertEquals(404, $response1->getStatusCode());
+        $this->assertEquals('Not Found', $response1->getReasonPhrase());
         
-        $request2 = $request1->withStatus(417, 'Foo Bar');
+        $response2 = $response1->withStatus(417, 'Foo Bar');
         
-        $this->assertEquals(417, $request2->getStatusCode());
-        $this->assertEquals('Foo Bar', $request2->getReasonPhrase());
+        $this->assertEquals(417, $response2->getStatusCode());
+        $this->assertEquals('Foo Bar', $response2->getReasonPhrase());
     }
     
     public function testRedirect()
     {
-        $request1 = Response::redirect('/foo/bar');
+        $response1 = Response::redirect('/foo/bar');
         
-        $this->assertEquals(Status::SEE_OTHER, $request1->getStatusCode());
-        $this->assertEquals('See Other', $request1->getReasonPhrase());
-        $this->assertEquals('/foo/bar', $request1->getHeaderLine('Location'));
+        $this->assertEquals(Status::SEE_OTHER, $response1->getStatusCode());
+        $this->assertEquals('See Other', $response1->getReasonPhrase());
+        $this->assertEquals('/foo/bar', $response1->getHeaderLine('Location'));
         
-        $request2 = Response::redirect('/foo/bar', true);
+        $response2 = Response::redirect('/foo/bar', true);
         
-        $this->assertEquals(Status::MOVED_PERMANENTLY, $request2->getStatusCode());
-        $this->assertEquals('Moved Permanently', $request2->getReasonPhrase());
-        $this->assertEquals('/foo/bar', $request2->getHeaderLine('Location'));
+        $this->assertEquals(Status::MOVED_PERMANENTLY, $response2->getStatusCode());
+        $this->assertEquals('Moved Permanently', $response2->getReasonPhrase());
+        $this->assertEquals('/foo/bar', $response2->getHeaderLine('Location'));
+    }
+    
+    public function testFile()
+    {
+        $file = new PhpStream('tests/data/response', 'wb');
+        $file->write('foobar');
+        $file->close();
+        
+        $response = Response::file('tests/data/response', 'text/plain');
+        $this->assertEquals(Status::OK, $response->getStatusCode());
+        $this->assertEquals('text/plain', $response->getHeaderLine('Content-Type'));
+        $this->assertEquals('foobar', $response->getBody());
     }
 }

@@ -29,6 +29,7 @@ use Jivoo\InvalidPropertyException;
  * @property-read string|null $domainName Domain name protocol and port.
  * @property-read string|null $method Request method, e.g. 'GET', 'POST' etc.
  * @proeprty-read bool $secure Whether or not HTTPS was used for this request.
+ * @deprecated
  */
 class Request
 {

@@ -74,6 +74,7 @@ use Jivoo\Core\Module;
  * @property-read array|Linkable|string|null $error The error route, see {@see Routing}.
  * @property-read DispatcherCollection $dispatchers Collection of dispatchers.
  * @property-read RoutingTable $routes Routing table.
+ * @deprecated
  */
 class Routing extends Module
 {

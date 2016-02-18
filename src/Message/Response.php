@@ -89,14 +89,18 @@ class Response extends Message implements \Psr\Http\Message\ResponseInterface
      * Create a file response.
      *
      * @param string $path Path to file.
+     * @param string|null $type Optional MIME type.
      * @return \self The response.
      */
-    public static function file($path)
+    public static function file($path, $type = null)
     {
         $response = new self(
             Status::OK,
             new PhpStream($path, 'rb')
         );
+        if (isset($type)) {
+            $response->setHeader('Content-Type', $type);
+        }
         return $response;
     }
 }
