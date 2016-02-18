@@ -6,18 +6,27 @@
 namespace Jivoo\Http\Message;
 
 /**
- * Description of NewRequest
+ * An HTTP response.
  */
 class Response extends Message implements \Psr\Http\Message\ResponseInterface
 {
+    
+    /**
+     * @var int
+     */
     private $status = 200;
     
+    /**
+     * @var string
+     */
     private $reason = 'OK';
     
     /**
+     * Construct a response object.
      *
-     * @param type $status
-     * @param string|resource|\Psr\Http\Message\StreamInterface $body
+     * @param int $status Status code.
+     * @param string|resource|\Psr\Http\Message\StreamInterface $body Response
+     * body.
      */
     public function __construct($status, $body = 'php://memory')
     {
@@ -28,17 +37,26 @@ class Response extends Message implements \Psr\Http\Message\ResponseInterface
         $this->status = $status;
         $this->reason = Status::phrase($status);
     }
-    
+
+    /**
+     * {@inheritdoc}
+     */
     public function getReasonPhrase()
     {
         return $this->reason;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getStatusCode()
     {
         return $this->status;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function withStatus($code, $reasonPhrase = '')
     {
         $response = clone $this;
@@ -50,6 +68,13 @@ class Response extends Message implements \Psr\Http\Message\ResponseInterface
         return $response;
     }
     
+    /**
+     * Create a redirect response.
+     *
+     * @param string $location Redirect target.
+     * @param bool $permanent Whether redirect is permanent.
+     * @return \self The response.
+     */
     public static function redirect($location, $permanent = false)
     {
         $response = new self(
@@ -60,6 +85,12 @@ class Response extends Message implements \Psr\Http\Message\ResponseInterface
         return $response;
     }
     
+    /**
+     * Create a file response.
+     *
+     * @param string $path Path to file.
+     * @return \self The response.
+     */
     public static function file($path)
     {
         $response = new self(

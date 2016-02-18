@@ -9,22 +9,41 @@ use Jivoo\EventSubjectBase;
 use Jivoo\Http\Message\Request;
 use Jivoo\Http\Message\Response;
 use Jivoo\Http\Message\Status;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * Description of SapiServer
+ * A simple server object with support for middleware.
  */
 class SapiServer extends EventSubjectBase
 {
-    
+ 
+    /**
+     * @var ServerRequestInterface
+     */
     private $request;
     
+    /**
+     * @var callable
+     */
     private $handler;
     
+    /**
+     * @var callable[]
+     */
     private $middleware = [];
     
+    /**
+     * Construct SAPI server.
+     *
+     * @param callable|null $handler Optional request handler. Must accept two
+     * parameters, a {@see ServerRequestInterface} object and a
+     * {@see ResponseInterface} object, and return a {@see ResponseInterface}
+     * object.
+     * @param ServerRequestInterface|null $request Optional request to handle.
+     * The default value is created from PHP's superglobals, see
+     * {@see Request::createGlobal}.
+     */
     public function __construct($handler = null, ServerRequestInterface $request = null)
     {
         parent::__construct();
@@ -39,16 +58,25 @@ class SapiServer extends EventSubjectBase
         }
         $this->request = $request;
     }
-    
-    public function close()
-    {
-    }
 
+    /**
+     * Add middleware.
+     *
+     * @param Middleware|callable $middleware Middleware function, should have
+     * the same signature as {@see Middleware::__invoke}, but does not need to
+     * be an object of the {@see Middleware} interface.
+     */
     public function add(callable $middleware)
     {
-        $this->middleware[] = $middleware;
+        array_unshift($this->middleware, $middleware);
     }
     
+    /**
+     * Serve a response.
+     *
+     * @param ResponseInterface $response The response.
+     * @throws HeadersSentException If the headers have already been sent.
+     */
     protected function serve(ResponseInterface $response)
     {
         if (headers_sent($file, $line)) {
@@ -61,6 +89,11 @@ class SapiServer extends EventSubjectBase
         $this->serveBody($response);
     }
     
+    /**
+     * Set the status line.
+     *
+     * @param ResponseInterface $response The response.
+     */
     protected function serveStatus(ResponseInterface $response)
     {
         $protocol = $response->getProtocolVersion();
@@ -72,6 +105,11 @@ class SapiServer extends EventSubjectBase
         header('HTTP/' . $protocol . ' ' . $status . $reason);
     }
     
+    /**
+     * Set the headers.
+     *
+     * @param ResponseInterface $response The response.
+     */
     protected function serveHeaders(ResponseInterface $response)
     {
         header_remove('X-Powered-By');
@@ -83,11 +121,27 @@ class SapiServer extends EventSubjectBase
         }
     }
     
+    /**
+     * Output the response body.
+     *
+     * @param ResponseInterface $response The response.
+     */
     protected function serveBody(ResponseInterface $response)
     {
-        echo $response->getBody();
+        $out = fopen('php://output', 'wb');
+        $body = $response->getBody();
+        $body->rewind();
+        while (! $body->eof()) {
+            fwrite($out, $body->read(8192));
+        }
+        $body->close();
+        fclose($out);
     }
     
+    /**
+     * @param callable[] $middleware
+     * @return callable
+     */
     private function getNext(array $middleware)
     {
         if (count($middleware)) {
@@ -100,6 +154,10 @@ class SapiServer extends EventSubjectBase
         }
     }
     
+    /**
+     * Start server, i.e. create a response for the current request using the
+     * available middleware and request handler.
+     */
     public function listen()
     {
         $request = $this->request;

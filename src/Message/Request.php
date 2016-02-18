@@ -5,22 +5,36 @@
 // See the LICENSE file or http://opensource.org/licenses/MIT for more information.
 namespace Jivoo\Http\Message;
 
+use Psr\Http\Message\ServerRequestInterface;
+
 /**
  * A request.
  */
-class Request extends Message implements \Psr\Http\Message\ServerRequestInterface
+class Request extends Message implements ServerRequestInterface
 {
 
     use RequestTrait, ServerRequestTrait;
     
+    /**
+     * Construct request.
+     *
+     * @param Uri $uri The URI.
+     * @param string $method Request method, e.g. 'GET', 'POST', 'PUT', 'PATCH',
+     * or 'DELETE'.
+     * @param array $query Query.
+     * @param array $data POST data.
+     * @param array $cookies Cookie parameters.
+     * @param array $files Uploaded files as instances of {@see UploadedFile}.
+     * @param array $server Server parameters.
+     */
     public function __construct(
         Uri $uri,
         $method = 'GET',
-        $query = [],
-        $data = [],
-        $cookies = [],
-        $files = [],
-        $server = []
+        array $query = [],
+        array $data = [],
+        array $cookies = [],
+        array $files = [],
+        array $server = []
     ) {
         parent::__construct(new PhpStream('php://input', 'r'));
         $this->uri = $uri;
@@ -36,6 +50,11 @@ class Request extends Message implements \Psr\Http\Message\ServerRequestInterfac
         $this->server = $server;
     }
     
+    /**
+     * Create a request from PHP's superglobals.
+     *
+     * @return self The request.
+     */
     public static function createGlobal()
     {
         $uri = new Uri(isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '');
@@ -52,7 +71,15 @@ class Request extends Message implements \Psr\Http\Message\ServerRequestInterfac
         return $request;
     }
     
-    public static function create($uri, $method = 'GET', $queryOrData = [])
+    /**
+     * Create a request.
+     *
+     * @param string $uri URI as a string.
+     * @param string $method Request method.
+     * @param array $queryOrData Query (GET) or data (POST/PUT/DELETE/PATCH).
+     * @return \self The request.
+     */
+    public static function create($uri, $method = 'GET', array $queryOrData = [])
     {
         $method = strtoupper($method);
         $query = [];

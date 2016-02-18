@@ -25,8 +25,9 @@ class PhpStream implements StreamInterface
      *
      * @param string|resource $streamOrPath A resource or path.
      * @param string $mode Stream mode, see {@see fopen}.
+     * @throws InvalidArgumentException If the stream can not be opened.
      */
-    public function __construct($streamOrPath, $mode = 'r')
+    public function __construct($streamOrPath, $mode = 'rb')
     {
         if (is_resource($streamOrPath)) {
             $this->stream = $streamOrPath;

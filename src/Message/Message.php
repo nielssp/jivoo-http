@@ -5,10 +5,13 @@
 // See the LICENSE file or http://opensource.org/licenses/MIT for more information.
 namespace Jivoo\Http\Message;
 
+use Psr\Http\Message\MessageInterface;
+use Psr\Http\Message\StreamInterface;
+
 /**
- * Description of Message
+ * An HTTP message.
  */
-class Message implements \Psr\Http\Message\MessageInterface
+class Message implements MessageInterface
 {
     
     /**
@@ -27,24 +30,34 @@ class Message implements \Psr\Http\Message\MessageInterface
     private $protocolVersion = '1.1';
     
     /**
-     * @var \Psr\Http\Message\StreamInterface
+     * @var StreamInterface
      */
     private $body;
     
     /**
+     * Construct message.
      *
-     * @param \Psr\Http\Message\StreamInterface $body
+     * @param StreamInterface $body Message body.
      */
-    public function __construct(\Psr\Http\Message\StreamInterface $body)
+    public function __construct(StreamInterface $body)
     {
         $this->body = $body;
     }
     
+    /**
+     * {@inheritdoc}
+     */
     public function getBody()
     {
         return $this->body;
     }
     
+    /**
+     * Set the value of a header.
+     *
+     * @param string $name Header name.
+     * @param string|string[] $value Header value.
+     */
     protected function setHeader($name, $value)
     {
         if (! is_array($value)) {
@@ -54,6 +67,9 @@ class Message implements \Psr\Http\Message\MessageInterface
         $this->headerKeys[strtolower($name)] = $name;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getHeader($name)
     {
         $name = strtolower($name);
@@ -63,26 +79,41 @@ class Message implements \Psr\Http\Message\MessageInterface
         return $this->headers[$this->headerKeys[$name]];
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getHeaderLine($name)
     {
         return implode(', ', $this->getHeader($name));
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getHeaders()
     {
         return $this->headers;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getProtocolVersion()
     {
         return $this->protocolVersion;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function hasHeader($name)
     {
         return isset($this->headerKeys[strtolower($name)]);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function withAddedHeader($name, $value)
     {
         $message = clone $this;
@@ -95,13 +126,19 @@ class Message implements \Psr\Http\Message\MessageInterface
         return $message;
     }
 
-    public function withBody(\Psr\Http\Message\StreamInterface $body)
+    /**
+     * {@inheritdoc}
+     */
+    public function withBody(StreamInterface $body)
     {
         $message = clone $this;
         $message->body = $body;
         return $message;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function withHeader($name, $value)
     {
         $message = clone $this;
@@ -109,6 +146,9 @@ class Message implements \Psr\Http\Message\MessageInterface
         return $message;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function withProtocolVersion($version)
     {
         $message = clone $this;
@@ -116,6 +156,9 @@ class Message implements \Psr\Http\Message\MessageInterface
         return $message;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function withoutHeader($name)
     {
         $name = strtolower($name);
