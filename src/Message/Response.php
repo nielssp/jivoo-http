@@ -59,4 +59,13 @@ class Response extends Message implements \Psr\Http\Message\ResponseInterface
         $response->setHeader('Location', $location);
         return $response;
     }
+    
+    public static function file($path)
+    {
+        $response = new self(
+            Status::OK,
+            new PhpStream($path, 'rb')
+        );
+        return $response;
+    }
 }
