@@ -51,6 +51,11 @@ class SapiServer extends EventSubjectBase
     
     protected function serve(ResponseInterface $response)
     {
+        if (headers_sent($file, $line)) {
+            throw new HeadersSentException(
+                'Headers already sent in ' . $file . ' on line ' . $line
+            );
+        }
         $this->serveStatus($response);
         $this->serveHeaders($response);
         $this->serveBody($response);
