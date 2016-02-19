@@ -1,81 +1,100 @@
 <?php
-// Jivoo HTTP 
+// Jivoo HTTP
 // Copyright (c) 2016 Niels Sonnich Poulsen (http://nielssp.dk)
 // Licensed under the MIT license.
 // See the LICENSE file or http://opensource.org/licenses/MIT for more information.
 namespace Jivoo\Http\Message;
 
+use Psr\Http\Message\ServerRequestInterface;
+
 /**
- * Description of NewRequest
+ * A request.
  */
-class Request extends Message implements \Psr\Http\Message\RequestInterface
+class Request extends Message implements ServerRequestInterface
 {
-    private $method = 'GET';
+
+    use RequestTrait, ServerRequestTrait;
     
-    private $requestTarget = '';
-    
-    private $uri;
-    
-    public function __construct(Uri $uri)
-    {
-        parent::__construct(new StringStream(''));
+    /**
+     * Construct request.
+     *
+     * @param Uri $uri The URI.
+     * @param string $method Request method, e.g. 'GET', 'POST', 'PUT', 'PATCH',
+     * or 'DELETE'.
+     * @param array $query Query.
+     * @param array $data POST data.
+     * @param array $cookies Cookie parameters.
+     * @param array $files Uploaded files as instances of {@see UploadedFile}.
+     * @param array $server Server parameters.
+     */
+    public function __construct(
+        Uri $uri,
+        $method = 'GET',
+        array $query = [],
+        array $data = [],
+        array $cookies = [],
+        array $files = [],
+        array $server = []
+    ) {
+        parent::__construct(new PhpStream('php://input', 'r'));
         $this->uri = $uri;
         $host = $uri->getHost();
         if ($host != '') {
             $this->setHeader('Host', $host);
         }
+        $this->method = $method;
+        $this->query = $query;
+        $this->data = $data;
+        $this->cookies = $cookies;
+        $this->files = $files;
+        $this->server = $server;
+    }
+
+    /**
+     * Create a request from PHP's superglobals.
+     *
+     * @return self The request.
+     */
+    public static function createGlobal()
+    {
+        $uri = new Uri(isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '');
+        $method = isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'GET';
+        $request = new self(
+            $uri,
+            $method,
+            $_GET,
+            $_POST,
+            $_COOKIE,
+            UploadedFile::convert($_FILES),
+            $_SERVER
+        );
+        return $request;
     }
     
-    public function getMethod()
+    /**
+     * Create a request.
+     *
+     * @param string $uri URI as a string.
+     * @param string $method Request method.
+     * @param array $queryOrData Query (GET) or data (POST/PUT/DELETE/PATCH).
+     * @return \self The request.
+     */
+    public static function create($uri, $method = 'GET', array $queryOrData = [])
     {
-        return $this->method;
-    }
-
-    public function getRequestTarget()
-    {
-        if ($this->requestTarget != '') {
-            return $this->requestTarget;
+        $method = strtoupper($method);
+        $query = [];
+        $data = [];
+        switch ($method) {
+            case 'POST':
+            case 'PUT':
+            case 'DELETE':
+            case 'PATCH':
+                $data = $queryOrData;
+                break;
+            default:
+                $query = $queryOrData;
+                break;
         }
-        $target = $this->uri->getPath();
-        if ($target == '') {
-            $target = '/';
-        }
-        $query = $this->uri->getQuery();
-        if ($query != '') {
-            $target .= '?' . $query;
-        }
-        return $target;
-    }
-
-    public function getUri()
-    {
-        return $this->uri;
-    }
-
-    public function withMethod($method)
-    {
-        $request = clone $this;
-        $request->method = $method;
-        return $request;
-    }
-
-    public function withRequestTarget($requestTarget)
-    {
-        $request = clone $this;
-        $request->requestTarget = $requestTarget;
-        return $request;
-    }
-
-    public function withUri(\Psr\Http\Message\UriInterface $uri, $preserveHost = false)
-    {
-        $request = clone $this;
-        $request->uri = $uri;
-        if (! $preserveHost or ! $this->hasHeader('Host')) {
-            $host = $uri->getHost();
-            if ($host != '') {
-                $request->setHeader('Host', $host);
-            }
-        }
-        return $request;
+        return new self(new Uri($uri), $method, $query, $data);
     }
 }

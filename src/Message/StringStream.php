@@ -6,49 +6,88 @@
 namespace Jivoo\Http\Message;
 
 /**
- * Description of Stream
+ * A stream wrapper for strings.
  */
 class StringStream implements \Psr\Http\Message\StreamInterface
 {
     
+    /**
+     * @var string
+     */
     private $string;
     
+    /**
+     * @var int
+     */
     private $length;
     
+    /**
+     * @var bool
+     */
+    private $mutable;
+    
+    /**
+     * @var int
+     */
     private $offset = 0;
     
-    public function __construct($string)
+    /**
+     * Construct string stream.
+     * @param string $string The string.
+     * @param bool $mutable Whether the stream should be writable.
+     */
+    public function __construct($string, $mutable = true)
     {
         $this->string = $string;
         $this->length = strlen($string);
+        $this->mutable = $mutable;
     }
     
+    /**
+     * {@inheritdoc}
+     */
     public function __toString()
     {
+        $this->offset = $this->length;
         return $this->string;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function close()
     {
         $this->detach();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function detach()
     {
         unset($this->string);
         return null;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function eof()
     {
         return $this->offset >= $this->length;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getContents()
     {
-        return substr($this->string, $this->offset);
+        return $this->read($this->length - $this->offset);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getMetadata($key = null)
     {
         if (isset($key)) {
@@ -57,38 +96,59 @@ class StringStream implements \Psr\Http\Message\StreamInterface
         return [];
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getSize()
     {
         return $this->length;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function isReadable()
     {
-        return true;
+        return isset($this->string);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function isSeekable()
     {
-        return true;
+        return isset($this->string);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function isWritable()
     {
-        return true;
+        return isset($this->string) and $this->mutable;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function read($length)
     {
-        $data = substr($string, $this->offset, $length);
-        $this->offset = $this->length + strlne($data);
+        $data = substr($this->string, $this->offset, $length);
+        $this->offset += strlen($data);
         return $data;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function rewind()
     {
         $this->offset = 0;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function seek($offset, $whence = SEEK_SET)
     {
         switch ($whence) {
@@ -104,18 +164,23 @@ class StringStream implements \Psr\Http\Message\StreamInterface
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function tell()
     {
         return $this->offset;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function write($string)
     {
         $length = strlen($string);
-        $this->string = substr($this->string, 0, $this->offset)
-            . $string . substr($this->string, $this->offset);
+        $this->string = substr_replace($this->string, $string, $this->offset, $length);
         $this->offset += $length;
-        $this->length += $length;
+        $this->length = strlen($this->string);
         return $length;
     }
 }

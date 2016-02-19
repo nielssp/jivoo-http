@@ -7,6 +7,7 @@ namespace Jivoo\Http;
 
 /**
  * Used for configuring routes and paths.
+ * @deprecated
  */
 class RoutingTable
 {

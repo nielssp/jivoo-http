@@ -6,24 +6,51 @@
 namespace Jivoo\Http\Message;
 
 /**
- * Description of Uri
+ * A URI.
  */
 class Uri implements \Psr\Http\Message\UriInterface
 {
+    
+    /**
+     * @var string
+     */
     private $userInfo = '';
     
+    /**
+     * @var string
+     */
     private $scheme = '';
     
+    /**
+     * @var string
+     */
     private $host = '';
     
+    /**
+     * @var int|null
+     */
     private $port = null;
     
+    /**
+     * @var string
+     */
     private $path = '';
     
+    /**
+     * @var string
+     */
     private $query = '';
     
+    /**
+     * @var string
+     */
     private $fragment = '';
     
+    /**
+     * Construct URI from a sring.
+     *
+     * @param string $url URI string.
+     */
     public function __construct($url)
     {
         $components = parse_url($url);
@@ -54,6 +81,9 @@ class Uri implements \Psr\Http\Message\UriInterface
         }
     }
     
+    /**
+     * {@inheritdoc}
+     */
     public function __toString()
     {
         $uri = $this->getScheme();
@@ -86,6 +116,9 @@ class Uri implements \Psr\Http\Message\UriInterface
         return $uri;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getAuthority()
     {
         $authority = $this->getHost();
@@ -103,21 +136,33 @@ class Uri implements \Psr\Http\Message\UriInterface
         return $authority;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getFragment()
     {
         return $this->fragment;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getHost()
     {
         return $this->host;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPath()
     {
         return $this->path;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPort()
     {
         if ($this->scheme == 'http' and $this->port == 80) {
@@ -128,21 +173,33 @@ class Uri implements \Psr\Http\Message\UriInterface
         return $this->port;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getQuery()
     {
         return $this->query;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getScheme()
     {
         return $this->scheme;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getUserInfo()
     {
         return $this->userInfo;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function withFragment($fragment)
     {
         $uri = clone $this;
@@ -150,6 +207,9 @@ class Uri implements \Psr\Http\Message\UriInterface
         return $uri;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function withHost($host)
     {
         $uri = clone $this;
@@ -157,13 +217,19 @@ class Uri implements \Psr\Http\Message\UriInterface
         return $uri;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function withPath($path)
     {
         $uri = clone $this;
-        $uri->path = strtolower(urlencode(urldecode($path)));
+        $uri->path = strtolower($path);
         return $uri;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function withPort($port)
     {
         \Jivoo\Assume::that($port > 0 and $port < 65535);
@@ -172,13 +238,19 @@ class Uri implements \Psr\Http\Message\UriInterface
         return $uri;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function withQuery($query)
     {
         $uri = clone $this;
-        $uri->query = urlencode(urldecode($query));
+        $uri->query = $query;
         return $uri;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function withScheme($scheme)
     {
         $uri = clone $this;
@@ -186,6 +258,9 @@ class Uri implements \Psr\Http\Message\UriInterface
         return $uri;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function withUserInfo($user, $password = null)
     {
         if (isset($password)) {

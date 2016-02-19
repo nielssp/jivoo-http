@@ -5,30 +5,71 @@
 // See the LICENSE file or http://opensource.org/licenses/MIT for more information.
 namespace Jivoo\Http\Message;
 
+use Jivoo\InvalidArgumentException;
+use Jivoo\Log\ErrorHandler;
+use Psr\Http\Message\StreamInterface;
+
 /**
- * Description of Stream
+ * Stream implementation based on PHP streams/resources.
  */
-class PhpStream implements \Psr\Http\Message\StreamInterface
+class PhpStream implements StreamInterface
 {
     
+    /**
+     * @var resource
+     */
     private $stream;
     
-    public function __construct($stream)
+    /**
+     * Construct stream.
+     *
+     * @param string|resource $streamOrPath A resource or path.
+     * @param string $mode Stream mode, see {@see fopen}.
+     * @throws InvalidArgumentException If the stream can not be opened.
+     */
+    public function __construct($streamOrPath, $mode = 'rb')
     {
-        $this->stream = $stream;
+        if (is_resource($streamOrPath)) {
+            $this->stream = $streamOrPath;
+        } else {
+            \Jivoo\Assume::isString($streamOrPath);
+            $error = ErrorHandler::detect(function () use ($streamOrPath, $mode) {
+                $this->stream = fopen($streamOrPath, $mode);
+            });
+            if ($error or $this->stream === false) {
+                throw new InvalidArgumentException('Could not open stream', 0, $error);
+            }
+        }
     }
     
+    /**
+     * {@inheritdoc}
+     */
     public function __toString()
     {
-        $this->rewind();
-        return $this->getContents();
+        try {
+            $this->rewind();
+            return $this->getContents();
+        } catch (\Jivoo\Http\Message\StreamException $e) {
+            return '';
+        }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function close()
     {
+        if (! isset($this->stream)) {
+            return;
+        }
         fclose($this->stream);
+        unset($this->stream);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function detach()
     {
         $stream = $this->stream;
@@ -36,18 +77,40 @@ class PhpStream implements \Psr\Http\Message\StreamInterface
         return $stream;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function eof()
     {
+        if (! isset($this->stream)) {
+            return true;
+        }
         return feof($this->stream);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getContents()
     {
-        return stream_get_contents($this->stream);
+        if (! isset($this->stream)) {
+            return '';
+        }
+        $data = stream_get_contents($this->stream);
+        if ($data === false) {
+            throw new StreamException('Could not read from stream');
+        }
+        return $data;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getMetadata($key = null)
     {
+        if (! isset($this->stream)) {
+            return isset($key) ? null : [];
+        }
         $metadata = stream_get_meta_data($this->stream);
         if (isset($key)) {
             return isset($metadata[$key]) ? $metadata[$key] : null;
@@ -55,54 +118,118 @@ class PhpStream implements \Psr\Http\Message\StreamInterface
         return $metadata;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getSize()
     {
-        return null;
+        if (! isset($this->stream)) {
+            return null;
+        }
+        $stat = fstat($this->stream);
+        return $stat['size'];
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function isReadable()
     {
-        return in_array(
-            $this->getMetadata('mode'),
-            ['r', 'r+', 'w+', 'a+', 'x+', 'c+']
-        );
+        if (! isset($this->stream)) {
+            return false;
+        }
+        $mode = $this->getMetadata('mode');
+        return strpos($mode, 'r') !== false or strpos($mode, '+') !== false;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function isSeekable()
     {
+        if (! isset($this->stream)) {
+            return false;
+        }
         return $this->getMetadata('seekable');
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function isWritable()
     {
-        return in_array(
-            $this->getMetadata('mode'),
-            ['w', 'r+', 'w+', 'c', 'a', 'x', 'a+', 'x+', 'c+']
-        );
+        if (! isset($this->stream)) {
+            return false;
+        }
+        $mode = $this->getMetadata('mode');
+        return strpos($mode, 'w') !== false or strpos($mode, '+') !== false
+            or strpos($mode, 'c') !== false or strpos($mode, 'a') !== false
+            or strpos($mode, 'x') !== false;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function read($length)
     {
-        return fread($this->stream, $length);
+        if (! $this->isReadable()) {
+            throw new StreamException('Stream not readable');
+        }
+        $data = fread($this->stream, $length);
+        if ($data === false) {
+            throw new StreamException('Could not read from stream');
+        }
+        return $data;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function rewind()
     {
         $this->seek(0);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function seek($offset, $whence = SEEK_SET)
     {
-        fseek($this->stream, $offset, $whence);
+        if (! $this->isSeekable()) {
+            throw new StreamException('Stream not seekable');
+        }
+        if (fseek($this->stream, $offset, $whence) !== 0) {
+            throw new StreamException('Could not set stream position');
+        }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function tell()
     {
-        return ftell($this->stream);
+        if (! isset($this->stream)) {
+            throw new StreamException('Stream not open');
+        }
+        $offset = ftell($this->stream);
+        if ($offset === false) {
+            throw new StreamException('Could not get stream position');
+        }
+        return $offset;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function write($string)
     {
-        return fwrite($this->stream, $string);
+        if (! $this->isWritable()) {
+            throw new StreamException('Stream not writable');
+        }
+        $bytes = fwrite($this->stream, $string);
+        if ($bytes === false) {
+            throw new StreamException('Could not write to stream');
+        }
+        return $bytes;
     }
 }

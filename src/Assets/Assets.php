@@ -16,6 +16,7 @@ use Jivoo\Snippets\SnippetDispatcher;
 
 /**
  * Asset system.
+ * @deprecated
  */
 class Assets extends LoadableModule
 {

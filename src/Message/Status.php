@@ -6,7 +6,7 @@
 namespace Jivoo\Http\Message;
 
 /**
- * HTTP status codes
+ * HTTP status codes.
  */
 class Status
 {
@@ -34,6 +34,9 @@ class Status
     const NOT_IMPLEMENTED = 501;
     const SERVICE_UNAVAILABLE = 503;
 
+    /**
+     * @codeCoverageIgnore
+     */
     private function __construct()
     {
     }
