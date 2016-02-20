@@ -17,7 +17,6 @@ class UrlRouteTest extends TestCase
         
         $route = new UrlRoute('/');
         $this->assertEquals('url:/', $route);
-        $this->assertEquals('url:/', $route->getKey());
         $this->assertEquals('/', $route->getPath([]));
         $this->assertEquals([], $route->getParameters());
         $this->assertEquals([], $route->getQuery());
@@ -29,7 +28,6 @@ class UrlRouteTest extends TestCase
         
         $route = new UrlRoute('http://example.com/test?foo=bar#baz');
         $this->assertEquals('http://example.com/test?foo=bar#baz', $route);
-        $this->assertEquals('http://example.com/test?foo=bar#baz', $route->getKey());
         $this->assertEquals('http://example.com/test?foo=bar#baz', $route->getPath([]));
         $this->assertEquals('baz', $route->getFragment());
         $this->assertEquals([], $route->getParameters());

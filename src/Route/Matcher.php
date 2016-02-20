@@ -14,7 +14,7 @@ interface Matcher
     /**
      *
      * @param string|array $patternOrPatterns
-     * @param string|array|Linkable $route
+     * @param string|array|HasRoute $route
      * @param int $priority
      * @return Matcher|null
      */

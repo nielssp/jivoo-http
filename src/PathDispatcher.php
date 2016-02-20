@@ -8,7 +8,7 @@ namespace Jivoo\Http;
 /**
  * Path-array based routing.
  */
-class PathDispatcher implements Dispatcher
+class PathDispatcher implements Scheme
 {
     /**
      * @var Routing Routing module.

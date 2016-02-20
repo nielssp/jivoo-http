@@ -15,16 +15,12 @@ interface Route
 {
     
     /**
-     * Convert to a route string, e.g. 'prefix:ClassName'.
+     * Convert to a route string, e.g.
+     * 'prefix:ClassName(parameter1, parameter2)?query#fragment'.
      *
      * @return string Route string.
      */
     public function __toString();
-    
-    /**
-     * @return string
-     */
-    public function getKey();
     
     /**
      * @return string[]
@@ -41,12 +37,27 @@ interface Route
      * @param string[] $pattern
      * @return string|string[]
      */
-    public function getPath($pattern);
+    public function getPath(array $pattern);
     
     /**
-     * return array
+     * @return string[]
      */
     public function getParameters();
+    
+    /**
+     * @param array $query
+     */
+    public function withQuery(array $query);
+    
+    /**
+     * @param string $fragment
+     */
+    public function withFragment($fragment);
+    
+    /**
+     * @param array $parameters
+     */
+    public function withParameters(array $parameters);
     
     /**
      *

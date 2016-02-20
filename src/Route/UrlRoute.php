@@ -1,5 +1,4 @@
 <?php
-
 // Jivoo HTTP 
 // Copyright (c) 2016 Niels Sonnich Poulsen (http://nielssp.dk)
 // Licensed under the MIT license.
@@ -9,79 +8,65 @@ namespace Jivoo\Http\Route;
 /**
  * Description of UrlRoute
  */
-class UrlRoute implements Route
+class UrlRoute extends RouteBase
 {
     private $url;
     
-    private $query = null;
-    
-    private $fragment = null;
-    
     public function __construct($url)
     {
-        $this->url = $url;
+        if (strpos($url, '?') === false and strpos($url, '#') === false) {
+            $this->url = $url;
+        } else {
+            $uri = new \Jivoo\Http\Message\Uri($url);
+            $query = $uri->getQuery();
+            if ($query != '') {
+                parse_str($query, $this->query);
+                $uri = $uri->withQuery('');
+            }
+            $fragment = $uri->getFragment();
+            if ($fragment != '') {
+                $this->fragment = $fragment;
+                $uri = $uri->withFragment('');
+            }
+            $this->url = $uri->__toString();
+        }
     }
     
     public function __toString()
     {
-        
-        if (preg_match('/^https?:/', $this->url) === 1) {
-            return $this->url;
+        $url = $this->getUrl();
+        if (preg_match('/^https?:/', $url) === 1) {
+            return $url;
         }
-        return 'url:' . $this->url;
+        return 'url:' . $url;
     }
 
     public function auto(Matcher $matcher, $resource = false)
     {
+        throw new RouteException('It is not possible to autoroute a URL');
     }
 
     public function dispatch(\Jivoo\Http\ActionRequest $request, \Psr\Http\Message\ResponseInterface $response)
     {
-        return \Jivoo\Http\Message\Response::redirect($this->url);
+        return \Jivoo\Http\Message\Response::redirect($this->getUrl());
     }
 
-    public function getParameters()
+    public function getPath(array $pattern)
     {
-        return [];
-    }
-
-    public function getPath($pattern)
-    {
-        return $this->url;
+        return $this->getUrl();
     }
     
-    private function parse()
+    public function getUrl()
     {
-        $url = parse_url($this->url);
-        $this->fragment = '';
-        $this->query = [];
-        if (isset($url['query'])) {
-            parse_str($url['query'], $this->query);
+        $url = $this->url;
+        $query = http_build_query($this->getQuery());
+        $fragment = $this->getFragment();
+        if ($query != '') {
+            $url .= '?' . $query;
         }
-        if (isset($url['fragment'])) {
-            $this->fragment = $url['fragment'];
+        if ($fragment != '') {
+            $url .= '#' . $fragment;
         }
-        
-    }
-
-    public function getFragment()
-    {
-        if (! isset($this->fragment)) {
-            $this->parse();
-        }
-        return $this->fragment;
-    }
-
-    public function getKey()
-    {
-        return $this->__toString();
-    }
-
-    public function getQuery()
-    {
-        if (! isset($this->query)) {
-            $this->parse();
-        }
-        return $this->query;
+        return $url;
     }
 }

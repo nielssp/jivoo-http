@@ -59,7 +59,7 @@ class DispatcherCollection
      * Add a dispatcher object.
      * @param Dispatcher $dispatcher Dispatcher object.
      */
-    public function add(Dispatcher $dispatcher)
+    public function add(Scheme $dispatcher)
     {
         $prefixes = $dispatcher->getPrefixes();
         foreach ($prefixes as $prefix) {
@@ -82,7 +82,7 @@ class DispatcherCollection
             }
         } elseif (is_string($route)) {
             $route = $this->toRoute($route);
-        } elseif (is_object($route) and $route instanceof Linkable) {
+        } elseif (is_object($route) and $route instanceof HasRoute) {
             return $this->validate($route->getRoute());
         }
         if (!is_array($route)) {
@@ -142,7 +142,7 @@ class DispatcherCollection
      */
     public function toRoute($routeString)
     {
-        if (preg_match('/^([a-zA-Z0-9_]+):/', $routeString, $matches) === 1) {
+        if (preg_match('/^([a-zA-Z0-9\.\-+]+):/', $routeString, $matches) === 1) {
             $prefix = $matches[1];
             if (isset($this->dispatchers[$prefix])) {
                 $route = $this->dispatchers[$prefix]->toRoute($routeString);

@@ -8,7 +8,7 @@ namespace Jivoo\Http;
 /**
  * Callback based routing.
  */
-class CallbackDispatcher implements Dispatcher
+class CallbackDispatcher implements Scheme
 {
     /**
      * {@inheritdoc}

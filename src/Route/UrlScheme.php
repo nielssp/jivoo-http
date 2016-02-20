@@ -8,7 +8,7 @@ namespace Jivoo\Http\Route;
 /**
  * Description of UriDispatcher
  */
-class UrlDispatcher implements Dispatcher
+class UrlScheme implements Scheme
 {
 
     public function fromArray(array $route)

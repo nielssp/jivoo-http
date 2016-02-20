@@ -6,19 +6,19 @@
 namespace Jivoo\Http\Route;
 
 /**
- * Implements a type of route.
+ * A type of route.
  */
-interface Dispatcher
+interface Scheme
 {
     /**
-     * Get route string prefixes understood by this dispatcher.
+     * Get route string prefixes understood by this route scheme.
      *
      * @return string[] List of prefixes.
      */
     public function getPrefixes();
     
     /**
-     * Get route array keys understood by this dispatcher.
+     * Get route array keys understood by this route scheme.
      *
      * @return string[] List of keys.
      */
@@ -38,9 +38,10 @@ interface Dispatcher
      * Convert a route string to a route object. The string is guaranteed to
      * have a one of the prefixes returned by {@see getPrefixes}.
      *
-     * @param string $routeString Route string, e.g. 'prefix:ClassName'.
+     * @param string $routeString A route string, e.g.
+     * 'prefix:ClassName(parameter1, parameter2)?query#fragment'.
      * @return Route A route.
-     * @throw RouteException If format is invalid.
+     * @throws RouteException If format of `$routeString` is invalid.
      */
     public function fromString($routeString);
 }

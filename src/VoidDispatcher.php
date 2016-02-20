@@ -8,7 +8,7 @@ namespace Jivoo\Http;
 /**
  * A dummy dispatcher that handles 'void:' routes.
  */
-class VoidDispatcher implements Dispatcher
+class VoidDispatcher implements Scheme
 {
     /**
      * {@inheritdoc}
