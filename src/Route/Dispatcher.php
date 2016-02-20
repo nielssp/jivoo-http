@@ -27,7 +27,7 @@ interface Dispatcher
     /**
      * Convert a route array to a route object. The array is guaranteed to
      * have a one of the keys returned by {@see getKeys}.
-     * 
+     *
      * @param array $route Route array.
      * @return Route A route.
      * @throw RouteException If format is invalid.

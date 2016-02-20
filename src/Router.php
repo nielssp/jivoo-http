@@ -19,12 +19,13 @@ class Router implements Middleware, Route\Matcher
     }
     
     /**
-     * 
+     *
      * @param string|array|Route|HasRoute $route
      * @return Route Validated route.
      * @throws RouteError
      */
-    public function validate($route) {
+    public function validate($route)
+    {
         return $route;
     }
     
@@ -64,5 +65,4 @@ class Router implements Middleware, Route\Matcher
         
         return $response;
     }
-
 }

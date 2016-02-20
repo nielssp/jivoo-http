@@ -12,7 +12,7 @@ interface Matcher
 {
     
     /**
-     * 
+     *
      * @param string|array $patternOrPatterns
      * @param string|array|Linkable $route
      * @param int $priority
@@ -21,7 +21,7 @@ interface Matcher
     public function match($patternOrPatterns, $route, $priority = 5);
     
     /**
-     * 
+     *
      * @param string|array|Route|HasRoute A route.
      * @return Matcher
      */

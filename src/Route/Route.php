@@ -16,7 +16,7 @@ interface Route
     
     /**
      * Convert to a route string, e.g. 'prefix:ClassName'.
-     * 
+     *
      * @return string Route string.
      */
     public function __toString();
@@ -37,7 +37,7 @@ interface Route
     public function getFragment();
     
     /**
-     * 
+     *
      * @param string[] $pattern
      * @return string|string[]
      */
@@ -49,7 +49,7 @@ interface Route
     public function getParameters();
     
     /**
-     * 
+     *
      * @param ActionRequest $request
      * @param ResponseInterface $response
      * @return ResponseInterface
@@ -57,7 +57,7 @@ interface Route
     public function dispatch(ActionRequest $request, ResponseInterface $response);
     
     /**
-     * 
+     *
      * @param \Jivoo\Http\Route\Matcher $matcher
      * @param bool $resource
      */
