@@ -51,7 +51,7 @@ class UrlRoute extends RouteBase
         return \Jivoo\Http\Message\Response::redirect($this->getUrl());
     }
 
-    public function getPath(array $pattern)
+    public function getPath($pattern)
     {
         return $this->getUrl();
     }

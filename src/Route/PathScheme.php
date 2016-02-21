@@ -6,31 +6,33 @@
 namespace Jivoo\Http\Route;
 
 /**
- * URL-based routes.
+ * Path-based routes.
  */
-class UrlScheme implements Scheme
+class PathScheme implements Scheme
 {
 
     public function fromArray(array $route)
     {
-        return new UrlRoute($route['url']);
+        $path = $route['path'];
+        if (is_string($path)) {
+            $path = explode('/', trim($path, '/'));
+        }
+        return new PathRoute($path);
     }
 
     public function fromString($routeString)
     {
-        if (strncmp($routeString, 'url:', 4) === 0) {
-            return new UrlRoute(substr($routeString, 4));
-        }
-        return new UrlRoute($routeString);
+        $path = substr($routeString, 5);
+        return $this->fromArray(['path' => $path]);
     }
 
     public function getKeys()
     {
-        return ['url'];
+        return ['path'];
     }
 
     public function getPrefixes()
     {
-        return ['url', 'http', 'https'];
+        return ['path'];
     }
 }

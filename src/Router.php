@@ -13,12 +13,36 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class Router implements Middleware, Route\Matcher
 {
+ 
+    /**
+     * @var ActionRequest|null
+     */
+    private $request = null;
     
+    /**
+     * @var Route\Route|null
+     */
+    private $route = null;
+    
+    /**
+     * @var array
+     */
     private $paths = [];
     
+    /**
+     * @var array
+     */
     private $patterns;
     
-    private $schemes = [];
+    /**
+     * @var Route\Scheme[]
+     */
+    private $schemePrefixes = [];
+    
+    /**
+     * @var Route\Scheme[]
+     */
+    private $schemeKeys = [];
     
     public function __construct(\Jivoo\Store\Document $config = null)
     {
@@ -28,8 +52,11 @@ class Router implements Middleware, Route\Matcher
     public function addScheme(Route\Scheme $scheme)
     {
         $prefixes = $scheme->getPrefixes();
-        foreach ($prefixes as $prefix) {
-            $this->schemes[$prefix] = $scheme;
+        foreach ($scheme->getPrefixes() as $prefix) {
+            $this->schemePrefixes[$prefix] = $scheme;
+        }
+        foreach ($scheme->getKeys() as $key) {
+            $this->schemeKeys[$key] = $scheme;
         }
     }
     
@@ -37,7 +64,9 @@ class Router implements Middleware, Route\Matcher
      *
      * @param string|array|Route|HasRoute $route
      * @return Route\Route Validated route.
-     * @throws RouteError
+     * @throws Route\RouteError
+     * @throws \Jivoo\InvalidArgumentException If `$route` is not a recognized
+     * type.
      */
     public function validate($route)
     {
@@ -47,13 +76,90 @@ class Router implements Middleware, Route\Matcher
         if ($route instanceof Route\HasRoute) {
             return $this->validate($route->getRoute());
         }
-        throw new \Exception('Not implemented');
+        if (is_string($route)) {
+            if ($route == '') {
+                if (isset($this->root)) {
+                    return $this->root;
+                }
+                $route = ['path' => []];
+            } else {
+                if (preg_match('/^([a-zA-Z0-9\.\-+]+):/', $route, $matches) === 1) {
+                    $prefix = $matches[1];
+                    if (isset($this->schemePrefixes[$prefix])) {
+                        $scheme = $this->schemePrefixes[$prefix];
+                        return $scheme->fromString($route);
+                    }
+                    throw new Route\RouteException('Unknown route scheme: ' . $prefix);
+                }
+                // TODO: use current scheme .. e.g. 'action:' if in a controller
+                throw new Route\RouteException('Missing route scheme');
+            }
+        }
+        \Jivoo\Assume::isArray($route);
+                
+        $default = [
+            'parameters' => null,
+            'query' => null,
+            'fragment' => null,
+            'mergeQuery' => false
+        ];
+        $scheme = null;
+        $parameters = [];
+        foreach ($route as $key => $value) {
+            if (is_int($key)) {
+                $parameters[] = $value;
+            } elseif ($key == 'paremeters') {
+                $parameters = array_merge($parameters, $value);
+            } elseif (in_array($key, ['query', 'fragment', 'mergeQuery'])) {
+                $default[$key] = $value;
+            } elseif (isset($this->schemeKeys[$key])) {
+                $default[$key] = $value;
+                if (! isset($scheme)) {
+                    $scheme = $this->schemeKeys[$key];
+                }
+            } else {
+                throw new Route\RouteException('Undefined key in route: ' . $key);
+            }
+        }
+        $route = $default;
+        if (count($parameters)) {
+            $route['parameters'] = $parameters;
+        }
+        if ($route['mergeQuery']) {
+            $query = [];
+            if (isset($this->request)) {
+                $query = $this->request->getQueryParams();
+            }
+            if (isset($route['query'])) {
+                $query = merge_array($query, $route['query']);
+            }
+            $route['query'] = $query;
+        }
+        unset($route['mergeQuery']);
+        
+        if (isset($scheme)) {
+            return $scheme->fromArray($route);
+        }
+        if (! isset($this->route)) {
+            throw new Route\RouteException('Unknown route scheme');
+        }
+        $copy = $this->route;
+        if (isset($route['parameters'])) {
+            $copy = $copy->withParameters($route['parameters']);
+        }
+        if (isset($route['query'])) {
+            $copy = $copy->withQuery($route['query']);
+        }
+        if (isset($route['fragment'])) {
+            $copy = $copy->withFragment($route['fragment']);
+        }
+        return $copy;
     }
     
     /**
      * {@inheritdoc}
      */
-    public function match($patternOrPatterns, $route, $priority = 5)
+    public function match($patternOrPatterns, $route = null, $priority = 5)
     {
         if (is_array($patternOrPatterns)) {
             foreach ($patternOrPatterns as $pattern => $route) {
@@ -72,13 +178,24 @@ class Router implements Middleware, Route\Matcher
         } else {
             $pattern = $pattern[0];
         }
-        if (! isset($this->index[$method])) {
-            $this->index[$method] = [];
+        $pattern = explode('/', trim($pattern, '/'));
+        
+        $arity = 0;
+        foreach ($pattern as $part) {
+            if ($part == '**' || $part == ':*') {
+                $arity = '*';
+                break;
+            } elseif ($part == '*') {
+                $arity++;
+            } elseif (isset($part[0]) and $part[0] == ':') {
+                $arity++;
+            }
         }
+        $this->addPath($route, $pattern, $arity, $priority);
         
         $this->patterns->insert([
             'method' => $method,
-            'pattern' => explode('/', trim($pattern, '/')),
+            'pattern' => $pattern,
             'route' => $route,
             'priority' => $priority
         ], $priority);
@@ -106,6 +223,34 @@ class Router implements Middleware, Route\Matcher
             'pattern' => $pattern,
             'priority' => $priority
         ];
+    }
+    
+    public function getPathValidated(Route\Route $route)
+    {
+        $parameters = $route->getParameters();
+        if (count($parameters)) {
+            $arity = '[' . count($parameters) . ']';
+        } else {
+            $arity = '[0]';
+        }
+        $key = $route->withoutAttributes()->__toString();
+        $pattern = null;
+        if (isset($this->paths[$key . $arity])) {
+            $pattern = $this->paths[$key . $arity]['pattern'];
+        } elseif (isset($this->paths[$key . '[*]'])) {
+            $pattern = $this->paths[$key . '[*]']['pattern'];
+        }
+        $path = $route->getPath($pattern);
+        if (! isset($path)) {
+            throw new Route\RouteException('Could not find path for: ' . $key . $arity);
+        }
+        return $path;
+    }
+    
+    public function getPath($route)
+    {
+        $route = $this->validate($route);
+        return $this->getPathValidated($route);
     }
     
     public function applyPattern(array $pattern, array $path)
@@ -164,7 +309,7 @@ class Router implements Middleware, Route\Matcher
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next = null)
     {
-        $request = new ActionRequest($request);
+        $this->request = new ActionRequest($request);
         
         // find path
         // find route

@@ -26,11 +26,12 @@ interface Scheme
      
     /**
      * Convert a route array to a route object. The array is guaranteed to
-     * have a one of the keys returned by {@see getKeys}.
+     * have a one of the keys returned by {@see getKeys}. The array also always
+     * contains the following keys: 'parameters', 'query', and 'fragment'.
      *
      * @param array $route Route array.
      * @return Route A route.
-     * @throw RouteException If format is invalid.
+     * @throws RouteException If format of array is invalid.
      */
     public function fromArray(array $route);
   

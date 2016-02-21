@@ -14,11 +14,11 @@ interface Matcher
     /**
      *
      * @param string|array $patternOrPatterns
-     * @param string|array|HasRoute $route
+     * @param string|array|Route|HasRoute|null $route
      * @param int $priority
      * @return Matcher|null
      */
-    public function match($patternOrPatterns, $route, $priority = 5);
+    public function match($patternOrPatterns, $route = null, $priority = 5);
     
     /**
      *

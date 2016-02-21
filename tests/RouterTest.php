@@ -6,6 +6,34 @@ use Jivoo\TestCase;
 class RouterTest extends TestCase
 {
     
+    public function testValidate()
+    {
+        $router = new Router();
+        $router->addScheme(new Route\UrlScheme());
+        
+        $url = $router->validate(['url' => 'foo/bar']);
+        $this->assertInstanceOf('Jivoo\Http\Route\UrlRoute', $url);
+        $this->assertEquals('url:foo/bar', $url);
+        
+        $url = $router->validate(['url' => 'foo/bar']);
+        $this->assertInstanceOf('Jivoo\Http\Route\UrlRoute', $url);
+        $this->assertEquals('url:foo/bar', $url);
+    }
+    
+    public function testGetPath()
+    {
+        $router = new Router();
+        $router->addScheme(new Route\UrlScheme());
+        $router->match([
+            'foo/bar' => 'http://example.com/bar',
+            'baz/**' => 'http://example.com/foo',
+            'foobar/:test' => 'http://example.com/baz'
+        ]);
+        
+        $this->assertEquals('http://example.com/bar', $router->getPath('http://example.com/bar'));
+        $this->assertEquals('http://example.com/foo', $router->getPath('http://example.com/foo'));
+    }
+    
     public function testPatternMatch()
     {
         $route1 = new Route\UrlRoute('foo');

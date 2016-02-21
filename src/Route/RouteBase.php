@@ -51,4 +51,13 @@ abstract class RouteBase implements Route
         $route->fragment = $fragment;
         return $route;
     }
+    
+    public function withoutAttributes()
+    {
+        $route = clone $this;
+        $route->fragment = '';
+        $route->query = [];
+        $route->parameters = [];
+        return $route;
+    }
 }

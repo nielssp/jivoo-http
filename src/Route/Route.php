@@ -34,10 +34,11 @@ interface Route
     
     /**
      *
-     * @param string[] $pattern
+     * @param string[]|null $pattern Pattern or null if no pattern has been
+     * created for this route.
      * @return string|string[]
      */
-    public function getPath(array $pattern);
+    public function getPath($pattern);
     
     /**
      * @return string[]
@@ -46,18 +47,28 @@ interface Route
     
     /**
      * @param array $query
+     * @return static
      */
     public function withQuery(array $query);
     
     /**
      * @param string $fragment
+     * @return static
      */
     public function withFragment($fragment);
     
     /**
      * @param array $parameters
+     * @return static
      */
     public function withParameters(array $parameters);
+    
+    /**
+     * Strip parameters, query, and fragment.
+     *
+     * @return static
+     */
+    public function withoutAttributes();
     
     /**
      *
