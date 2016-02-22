@@ -10,11 +10,11 @@ namespace Jivoo\Http\Message;
  */
 trait RequestTrait
 {
-    private $method = 'GET';
+    protected $method = 'GET';
     
-    private $requestTarget = '';
+    protected $requestTarget = '';
     
-    private $uri;
+    protected $uri;
     
     protected abstract function hasHeader($name);
     

@@ -11,17 +11,17 @@ namespace Jivoo\Http\Message;
 trait ServerRequestTrait
 {
     
-    private $attributes = [];
+    protected $attributes = [];
     
-    private $cookies = [];
+    protected $cookies = [];
     
-    private $data = [];
+    protected $data = [];
     
-    private $query = [];
+    protected $query = [];
     
-    private $server = [];
+    protected $server = [];
     
-    private $files = [];
+    protected $files = [];
 
     public function getAttribute($name, $default = null)
     {

@@ -49,6 +49,13 @@ class Request extends Message implements ServerRequestInterface
         $this->files = $files;
         $this->server = $server;
     }
+    
+    public function withServerParams(array $server)
+    {
+        $request = clone $this;
+        $request->server = $server;
+        return $request;
+    }
 
     /**
      * Create a request from PHP's superglobals.

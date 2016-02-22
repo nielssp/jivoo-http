@@ -27,7 +27,7 @@ class Message implements MessageInterface
     /**
      * @var type
      */
-    private $protocolVersion = '1.1';
+    protected $protocolVersion = '1.1';
     
     /**
      * @var StreamInterface

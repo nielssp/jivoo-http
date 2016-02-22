@@ -311,7 +311,6 @@ class Router implements Middleware, Route\Matcher
     {
         $this->request = new ActionRequest($request);
         
-        // find path
         // find route
         // apply router middleware
         // call action
