@@ -162,6 +162,10 @@ class ActionRequest extends Message\Message implements \Psr\Http\Message\ServerR
                 }
             }
         }
-        return ltrim($path, '/');
+        $path = ltrim($path, '/');
+        if ($path == '') {
+            return [];
+        }
+        return explode('/', $path);
     }
 }

@@ -34,6 +34,28 @@ class RouterTest extends TestCase
         $this->assertEquals('http://example.com/foo', $router->getPath('http://example.com/foo'));
     }
     
+    public function testInvoke()
+    {
+        $router = new Router();
+        $router->addScheme(new Route\UrlScheme());
+        $router->match([
+            'foo/bar' => 'http://example.com/bar'
+        ]);
+        
+        $request1 = Message\Request::create('http://example.net/foo/bar');
+        $response1 = new Message\Response(Message\Status::OK);
+        
+        $response2 = $router($request1, $response1);
+        $this->assertEquals(Message\Status::SEE_OTHER, $response2->getStatusCode());
+        $this->assertEquals('http://example.com/bar', $response2->getHeaderLine('Location'));
+        
+        $request2 = Message\Request::create('http://example.net/foo');
+        
+        $this->assertThrows('Jivoo\Http\Route\RouteException', function () use ($router, $request2, $response1) {
+            $router($request2, $response1);
+        });
+    }
+    
     public function testPatternMatch()
     {
         $route1 = new Route\UrlRoute('foo');

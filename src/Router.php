@@ -268,6 +268,8 @@ class Router implements Middleware, Route\Matcher
                     array_slice($path, $j)
                 );
                 break;
+            } elseif (! isset($path[$j])) {
+                return null;
             }
             if ($path[$j] == $part) {
                 continue;
@@ -311,10 +313,12 @@ class Router implements Middleware, Route\Matcher
     {
         $this->request = new ActionRequest($request);
         
-        // find route
+        $path = $this->request->getAttribute('path');
+        $this->route = $this->findMatch($path, $this->request->getMethod());
+        if (! isset($this->route)) {
+            throw new Route\RouteException('No route found for path: ' . implode('/', $path));
+        }
         // apply router middleware
-        // call action
-        
-        return $response;
+        return $this->route->dispatch($this->request, $response);
     }
 }
