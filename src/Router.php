@@ -51,7 +51,6 @@ class Router implements Middleware, Route\Matcher
     
     public function addScheme(Route\Scheme $scheme)
     {
-        $prefixes = $scheme->getPrefixes();
         foreach ($scheme->getPrefixes() as $prefix) {
             $this->schemePrefixes[$prefix] = $scheme;
         }
