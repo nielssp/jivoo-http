@@ -44,6 +44,11 @@ class Router implements Middleware, Route\Matcher
      */
     private $schemeKeys = [];
     
+    /**
+     * @var callable[]
+     */
+    private $middleware = [];
+    
     public function __construct(\Jivoo\Store\Document $config = null)
     {
         $this->patterns = new \SplPriorityQueue();
@@ -57,6 +62,18 @@ class Router implements Middleware, Route\Matcher
         foreach ($scheme->getKeys() as $key) {
             $this->schemeKeys[$key] = $scheme;
         }
+    }
+    
+    /**
+     * Add middleware.
+     *
+     * @param Middleware|callable $middleware Middleware function, should have
+     * the same signature as {@see Middleware::__invoke}, but does not need to
+     * be an object of the {@see Middleware} interface.
+     */
+    public function add(callable $middleware)
+    {
+        array_unshift($this->middleware, $middleware);
     }
     
     /**
@@ -306,6 +323,26 @@ class Router implements Middleware, Route\Matcher
     }
     
     /**
+     * @param callable[] $middleware
+     * @param callable $last
+     * @return callable
+     */
+    private function getNext(array $middleware, callable $last)
+    {
+        return function (ServerRequestInterface $request, ResponseInterface $response) use ($middleware, $last) {
+            if (! ($request instanceof ActionRequest)) {
+                $request = new ActionRequest($request);
+            }
+            $this->request = $request;
+            if (count($middleware)) {
+                $next = array_shift($middleware);
+                return $next($request, $response, $this->getNext($middleware));
+            }
+            return $last($request, $response);
+        };
+    }
+    
+    /**
      * {@inheritdoc}
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next = null)
@@ -317,7 +354,10 @@ class Router implements Middleware, Route\Matcher
         if (! isset($this->route)) {
             throw new Route\RouteException('No route found for path: ' . implode('/', $path));
         }
-        // apply router middleware
-        return $this->route->dispatch($this->request, $response);
+        $middleware = $this->middleware;
+        
+        $first = $this->getNext($middleware, [$this->route, 'dispatch']);
+        $response = $first($this->request, $response);
+        return $response;
     }
 }
