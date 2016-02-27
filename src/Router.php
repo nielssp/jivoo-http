@@ -32,7 +32,7 @@ class Router implements Middleware, Route\Matcher
     /**
      * @var array
      */
-    private $patterns;
+    private $patterns = [];
     
     /**
      * @var Route\Scheme[]
@@ -49,11 +49,20 @@ class Router implements Middleware, Route\Matcher
      */
     private $middleware = [];
     
+    /**
+     * @var bool
+     */
+    private $rewrite = false;
+    
     public function __construct(\Jivoo\Store\Document $config = null)
     {
-        $this->patterns = new \SplPriorityQueue();
     }
     
+    /**
+     * Add a route scheme.
+     *
+     * @param \Jivoo\Http\Route\Scheme $scheme Scheme.
+     */
     public function addScheme(Route\Scheme $scheme)
     {
         foreach ($scheme->getPrefixes() as $prefix) {
@@ -76,6 +85,16 @@ class Router implements Middleware, Route\Matcher
         array_unshift($this->middleware, $middleware);
     }
     
+    public function enableRewrite($enable = true)
+    {
+        $this->rewrite = $enable;
+    }
+    
+    public function disableRewrite()
+    {
+        $this->rewrite = false;
+    }
+
     /**
      *
      * @param string|array|Route|HasRoute $route
@@ -209,12 +228,12 @@ class Router implements Middleware, Route\Matcher
         }
         $this->addPath($route, $pattern, $arity, $priority);
         
-        $this->patterns->insert([
+        $this->patterns[] = [
             'method' => $method,
             'pattern' => $pattern,
             'route' => $route,
             'priority' => $priority
-        ], $priority);
+        ];
     }
 
     /**
@@ -310,6 +329,7 @@ class Router implements Middleware, Route\Matcher
     
     public function findMatch(array $path, $method)
     {
+        usort($this->patterns, ['Jivoo\Utilities', 'prioritySorter']);
         foreach ($this->patterns as $pattern) {
             if ($pattern['method'] != 'ANY' and $pattern['method'] != $method) {
                 continue;
@@ -343,13 +363,49 @@ class Router implements Middleware, Route\Matcher
     }
     
     /**
+     * Create a path redirect.
+     *
+     * @param string|string[] $path Path array.
+     * @param array $query Query.
+     * @param string $fragment Fragment.
+     * @param bool $permanent Whether redirect is permanent.
+     * @param bool $rewrite Whether to force removal of script name from path.
+     * @return Message\Response A redirect response.
+     */
+    public function redirectPath($path, array $query = [], $fragment = '', $permanent = false, $rewrite = false)
+    {
+        $location = new Message\Uri($this->pathToString($path, $rewrite));
+        $location = $location->withQuery(http_build_query($query))
+            ->withFragment($fragment);
+        return Message\Response::redirect($location, $permanent);
+    }
+    
+    public function redirect($route, $permanent = false)
+    {
+        $route = $this->validate($route);
+        return $this->redirectPath($this->getPath($route), $route->getQuery(), $route->getFragment(), $permanent);
+    }
+    
+    /**
      * {@inheritdoc}
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next = null)
     {
         $this->request = new ActionRequest($request);
         
-        $path = $this->request->getAttribute('path');
+        $path = $this->request->path;
+        if ($this->rewrite) {
+        } else {
+            if (!isset($path[0]) or $path[0] != $this->request->scriptName) {
+                return $this->redirectPath($path, $this->request->query, '', true);
+            }
+            array_shift($path);
+            $this->request = $this->request->withAttribute('path', $path);
+        }
+        if (count($path) > 0 and $path[count($path) - 1] === '') {
+            return $this->redirectPath($path, $this->request->query, '', true);
+        }
+        
         $this->route = $this->findMatch($path, $this->request->getMethod());
         if (! isset($this->route)) {
             throw new Route\RouteException('No route found for path: ' . implode('/', $path));
@@ -359,5 +415,32 @@ class Router implements Middleware, Route\Matcher
         $first = $this->getNext($middleware, [$this->route, 'dispatch']);
         $response = $first($this->request, $response);
         return $response;
+    }
+    
+    /**
+     * Convert path array to a string.
+     *
+     * @param string|string[] $path Path array or absolute url.
+     * @param bool $rewrite Whether to force removal of script name from path.
+     * @return string Path string.
+     */
+    public function pathToString($path, $rewrite = false)
+    {
+        if (is_string($path)) {
+            return $path;
+        }
+        $str = $this->request->basePath;
+        if ($str == '/') {
+            $str = '';
+        }
+        if (! ($this->rewrite or $rewrite)) {
+            $str .= '/' . $this->request->scriptName;
+        }
+        $str .= '/' . implode('/', array_map('urlencode', $path));
+        $str = rtrim($str, '/');
+        if ($str == '') {
+            return '/';
+        }
+        return $str;
     }
 }

@@ -34,26 +34,84 @@ class RouterTest extends TestCase
         $this->assertEquals('http://example.com/foo', $router->getPath('http://example.com/foo'));
     }
     
-    public function testInvoke()
+    public function testPathToString()
     {
         $router = new Router();
         $router->addScheme(new Route\UrlScheme());
-        $router->match([
-            'foo/bar' => 'http://example.com/bar'
-        ]);
+        $router->match('foo', 'http://example.com');
+
+        $request = Message\Request::create('/index.php/foo')
+            ->withServerParams(['SCRIPT_NAME' => '/index.php']);
         
-        $request1 = Message\Request::create('http://example.net/foo/bar');
+        $router($request, new Message\Response(Message\Status::OK));
+        
+        $this->assertEquals('/index.php', $router->pathToString([]));
+        $this->assertEquals('/', $router->pathToString([], true));
+        $this->assertEquals('/index.php/foo/bar', $router->pathToString(['foo', 'bar']));
+        $router->enableRewrite();
+        $this->assertEquals('/foo/bar', $router->pathToString(['foo', 'bar', '', '']));
+        $this->assertEquals('/foo//bar', $router->pathToString(['foo', '', 'bar']));
+    }
+    
+    public function testRedirect()
+    {
+        $router = new Router();
+        $router->addScheme(new Route\UrlScheme());
+        $router->match('foo', 'http://example.com');
+
+        $request = Message\Request::create('/index.php/foo')
+            ->withServerParams(['SCRIPT_NAME' => '/index.php']);
+        
+        $router($request, new Message\Response(Message\Status::OK));
+        
+        $response = $router->redirect('http://example.com/foo');
+        $this->assertEquals(Message\Status::SEE_OTHER, $response->getStatusCode());
+        $this->assertEquals('http://example.com/foo', $response->getHeaderLine('Location'));
+    }
+    
+    public function testInvoke()
+    {
+        $router = new Router();
+        $router->enableRewrite();
+        $router->addScheme(new Route\UrlScheme());
+        $router->match('foo/bar', 'http://example.com/bar');
+        
+        $request1 = Message\Request::create('/foo/bar');
         $response1 = new Message\Response(Message\Status::OK);
         
         $response2 = $router($request1, $response1);
         $this->assertEquals(Message\Status::SEE_OTHER, $response2->getStatusCode());
         $this->assertEquals('http://example.com/bar', $response2->getHeaderLine('Location'));
         
-        $request2 = Message\Request::create('http://example.net/foo');
-        
+        $request2 = Message\Request::create('/foo');
         $this->assertThrows('Jivoo\Http\Route\RouteException', function () use ($router, $request2, $response1) {
             $router($request2, $response1);
         });
+        
+        // Test removal of trailing slash
+        $request3 = Message\Request::create('/foo/');
+        $response3 = $router($request3, $response1);
+        $this->assertEquals(Message\Status::MOVED_PERMANENTLY, $response3->getStatusCode());
+        $this->assertEquals('/foo', $response3->getHeaderLine('Location'));
+        
+        $router->disableRewrite();
+        
+        // Test index.php redirects
+        $request4 = Message\Request::create('/foo/bar')->withServerParams([
+            'SCRIPT_NAME' => '/index.php'
+        ]);
+        $response4 = $router($request4, $response1);
+        $this->assertEquals(Message\Status::MOVED_PERMANENTLY, $response4->getStatusCode());
+        $this->assertEquals('/index.php/foo/bar', $response4->getHeaderLine('Location'));
+        
+        // Test index.php removal from path
+        $request5 = Message\Request::create('/index.php/foo/bar')->withServerParams([
+            'SCRIPT_NAME' => '/index.php'
+        ]);
+        $response5 = $router($request5, $response1);
+        $this->assertEquals(Message\Status::SEE_OTHER, $response5->getStatusCode());
+        $this->assertEquals('http://example.com/bar', $response5->getHeaderLine('Location'));
+        
     }
     
     public function testPatternMatch()
@@ -88,6 +146,6 @@ class RouterTest extends TestCase
         $this->assertEquals(['baz', 'foobar'], $match->getParameters());
         
         $this->assertNull($router->findMatch(['foo'], 'POST'));
-        $this->assertNull($router->findMatch(['baz'], 'GET'));
+        $this->assertNull($router->findMatch(['baz', 'bar'], 'GET'));
     }
 }

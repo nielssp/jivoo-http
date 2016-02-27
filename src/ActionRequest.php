@@ -7,12 +7,26 @@ namespace Jivoo\Http;
 
 /**
  * A server request wrapper for use with {@see Router}.
+ * @property-read string[] $path Routable path array.
+ * @property-read string $basPath Request base path, .e.g. '/foo/' in
+ * '/foo/index.php/bar'.
+ * @property-read string $scriptName Entry script name, e.g. 'index.php' in
+ * '/foo/index.php/bar'.
+ * @property-read string $method Request method.
+ * @property-read Message\Uri $uri Request URI.
+ * @property-read array $data POST/PUT/PATCH data.
+ * @property-read array $query Request query.
  */
 class ActionRequest extends Message\Message implements \Psr\Http\Message\ServerRequestInterface
 {
     
     use Message\RequestTrait, Message\ServerRequestTrait;
     
+    /**
+     * Construct action request.
+     *
+     * @param \Psr\Http\Message\ServerRequestInterface $request Request to wrap.
+     */
     public function __construct(\Psr\Http\Message\ServerRequestInterface $request)
     {
         parent::__construct($request->getBody());
@@ -29,6 +43,15 @@ class ActionRequest extends Message\Message implements \Psr\Http\Message\ServerR
         $this->query = $request->getQueryParams();
         $this->server = $request->getServerParams();
         $this->files = $request->getUploadedFiles();
+        
+        if (isset($this->server['SCRIPT_NAME'])) {
+            $this->attributes['basePath'] = dirname($this->server['SCRIPT_NAME']);
+            $this->attributes['scriptName'] = basename($this->server['SCRIPT_NAME']);
+        } else {
+            $this->attributes['basePath'] = '/';
+            $this->attributes['scriptName'] = 'index.php';
+        }
+        
         if (! isset($this->attributes['path'])) {
             $this->attributes['path'] = self::findPath($this);
         }
@@ -53,6 +76,28 @@ class ActionRequest extends Message\Message implements \Psr\Http\Message\ServerR
                 }
             }
         }
+    }
+    
+    /**
+     * Get value of property.
+     * @param string $property Property name.
+     * @return mixed Value of property.
+     * @throws \Jivoo\InvalidPropertyException If the property is undefined.
+     */
+    public function __get($property)
+    {
+        switch ($property) {
+            case 'path':
+            case 'basePath':
+            case 'scriptName':
+                return $this->getAttribute($property);
+            case 'method':
+            case 'uri':
+            case 'data':
+            case 'query':
+                return $this->$property;
+        }
+        throw new \Jivoo\InvalidPropertyException('Undefined property: ' . $property);
     }
     
     /**
@@ -154,17 +199,19 @@ class ActionRequest extends Message\Message implements \Psr\Http\Message\ServerR
         $server = $request->getServerParams();
         $path = $request->getUri()->getPath();
         if (isset($server['SCRIPT_NAME'])) {
-            $scriptName = $server['SCRIPT_NAME'];
-            if ($scriptName != '/') {
-                $length = strlen($scriptName);
-                if (substr($path, 0, $length) == $scriptName) {
+            $basePath = dirname($server['SCRIPT_NAME']);
+            if ($basePath != '/') {
+                $length = strlen($basePath);
+                if (substr($path, 0, $length) == $basePath) {
                     $path = substr($path, $length);
                 }
             }
         }
-        $path = ltrim($path, '/');
-        if ($path == '') {
+        if ($path == '/' or $path == '') {
             return [];
+        }
+        if ($path[0] == '/') {
+            $path = substr($path, 1);
         }
         return explode('/', $path);
     }
