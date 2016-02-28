@@ -158,7 +158,7 @@ class Router implements Middleware, Route\Matcher
     /**
      * {@inheritdoc}
      */
-    public function match($patternOrPatterns, $route = null, $priority = 5)
+    public function match($patternOrPatterns, $route, $priority = 5)
     {
         if (is_array($patternOrPatterns)) {
             foreach ($patternOrPatterns as $pattern => $route) {
@@ -198,6 +198,15 @@ class Router implements Middleware, Route\Matcher
             'route' => $route,
             'priority' => $priority
         ], $priority);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function auto($route)
+    {
+        $route = $this->validate($route);
+        $route->auto($this, false);
     }
 
     /**
