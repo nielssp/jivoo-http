@@ -24,8 +24,6 @@ class CallableRoute extends RouteBase
 
     public function auto(Matcher $matcher, $resource = false)
     {
-        $reflect = new \ReflectionFunction($this->callable);
-        
         throw new RouteException('It is not possible to autoroute a callable route');
     }
 

@@ -1,5 +1,4 @@
 <?php
-
 // Jivoo HTTP 
 // Copyright (c) 2016 Niels Sonnich Poulsen (http://nielssp.dk)
 // Licensed under the MIT license.
@@ -11,7 +10,17 @@ namespace Jivoo\Http\Route;
  */
 class NestedMatcher implements Matcher
 {
-    public function match($patternOrPatterns, $route, $priority = 5)
+    private $parent;
+    
+    private $prefix;
+    
+    public function __construct(Matcher $parent, $prefix = '')
+    {
+        $this->parent = $parent;
+        $this->prefix = $prefix;
+    }
+    
+    public function match($patternOrPatterns, $route = null, $priority = 5)
     {
         if (is_array($patternOrPatterns)) {
             foreach ($patternOrPatterns as $pattern => $route) {
@@ -19,9 +28,15 @@ class NestedMatcher implements Matcher
             }
             return;
         }
+        return $this->parent->match($this->prefix . '/' . $patternOrPatterns, $route, $priority);
     }
 
     public function resource($route)
+    {
+        
+    }
+
+    public function auto($route)
     {
         
     }
