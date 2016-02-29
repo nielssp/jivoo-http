@@ -13,15 +13,11 @@ class CallableScheme implements Scheme
 
     public function fromArray(array $route)
     {
-        return new CallableRoute($route['callable']);
+        return new CallableRoute($route['callable'], $route['parameters']);
     }
 
     public function fromString($routeString)
     {
-        if (strncmp($routeString, 'url:', 4) === 0) {
-            return new UrlRoute(substr($routeString, 4));
-        }
-        return new UrlRoute($routeString);
     }
 
     public function getKeys()
@@ -31,6 +27,6 @@ class CallableScheme implements Scheme
 
     public function getPrefixes()
     {
-        return ['callable'];
+        return [];
     }
 }

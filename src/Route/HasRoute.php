@@ -6,13 +6,14 @@
 namespace Jivoo\Http\Route;
 
 /**
- * An object that can be used in place of a route, see {@see Routing}.
+ * An object that can be used in place of a route, see {@see Router}.
  */
 interface HasRoute
 {
     /**
-     * Get a route.
-     * @return string|array|Route|HasRoute A route, see {@see Routing}.
+     * Get the route.
+     *
+     * @return string|array|Route|HasRoute A route, see {@see Router}.
      */
     public function getRoute();
 }

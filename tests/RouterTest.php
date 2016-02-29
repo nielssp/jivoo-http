@@ -10,14 +10,20 @@ class RouterTest extends TestCase
     {
         $router = new Router();
         $router->addScheme(new Route\UrlScheme());
+        $router->addScheme(new Route\CallableScheme());
         
         $url = $router->validate(['url' => 'foo/bar']);
         $this->assertInstanceOf('Jivoo\Http\Route\UrlRoute', $url);
         $this->assertEquals('url:foo/bar', $url);
         
-        $url = $router->validate(['url' => 'foo/bar']);
-        $this->assertInstanceOf('Jivoo\Http\Route\UrlRoute', $url);
-        $this->assertEquals('url:foo/bar', $url);
+        $callable = $router->validate([
+            'callable' => function () {
+            },
+            'foo',
+            'bar'
+        ]);
+        $this->assertInstanceOf('Jivoo\Http\Route\CallableRoute', $callable);
+        $this->assertEquals(['foo', 'bar'], $callable->getParameters());
     }
     
     public function testGetPath()

@@ -12,9 +12,10 @@ class CallableRoute extends RouteBase
 {
     private $callable;
     
-    public function __construct(callable $callable)
+    public function __construct(callable $callable, $parameters)
     {
         $this->callable = $callable;
+        $this->parameters = $parameters;
     }
     
     public function __toString()

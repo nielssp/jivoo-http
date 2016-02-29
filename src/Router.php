@@ -191,6 +191,14 @@ class Router implements Middleware, Route\Matcher
         return $copy;
     }
     
+    public function root($route) {
+        return $this->match('', $route, 10);
+    }
+    
+    public function error($route) {
+        return $this->match('**', $route, 0);
+    }
+    
     /**
      * {@inheritdoc}
      */
@@ -403,8 +411,7 @@ class Router implements Middleware, Route\Matcher
         $this->request = new ActionRequest($request);
         
         $path = $this->request->path;
-        if ($this->rewrite) {
-        } else {
+        if (! $this->rewrite) {
             if (!isset($path[0]) or $path[0] != $this->request->scriptName) {
                 return $this->redirectPath($path, $this->request->query, '', true);
             }
