@@ -191,11 +191,13 @@ class Router implements Middleware, Route\Matcher
         return $copy;
     }
     
-    public function root($route) {
+    public function root($route)
+    {
         return $this->match('', $route, 10);
     }
     
-    public function error($route) {
+    public function error($route)
+    {
         return $this->match('**', $route, 0);
     }
     
