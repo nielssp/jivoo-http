@@ -10,6 +10,22 @@ namespace Jivoo\Http\Route;
  */
 interface Matcher
 {
+
+    /**
+     * Set the root route. Same as `match('', $route, 10)`.
+     *
+     * @param string|array|Route|HasRoute $route A route, see
+     * {@see \Jivoo\Http\Router}.
+     */
+    public function root($route);
+    
+    /**
+     * Set the error route. Same as `match('**', $route, 0)`.
+     *
+     * @param string|array|Route|HasRoute $route A route, see
+     * {@see \Jivoo\Http\Router}.
+     */
+    public function error($route);
        
     /**
      *
@@ -23,12 +39,14 @@ interface Matcher
     /**
      *
      * @param string|array|Route|HasRoute $route
+     * @return Matcher
      */
     public function auto($route);
     
     /**
      *
      * @param string|array|Route|HasRoute A route.
+     * @return Matcher
      */
     public function resource($route);
 }

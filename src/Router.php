@@ -10,6 +10,9 @@ use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Action router.
+ *
+ * An action is a function from ({@see ActionRequest}, {@see ResponseInterface})
+ * to {@see ResponseInterface}.
  */
 class Router implements Middleware, Route\Matcher
 {
@@ -54,6 +57,12 @@ class Router implements Middleware, Route\Matcher
      */
     private $rewrite = false;
     
+    /**
+     * Construct router.
+     *
+     * @param \Jivoo\Store\Document $config Optional router configuration
+     * document.
+     */
     public function __construct(\Jivoo\Store\Document $config = null)
     {
     }
@@ -78,28 +87,39 @@ class Router implements Middleware, Route\Matcher
      *
      * @param Middleware|callable $middleware Middleware function, should have
      * the same signature as {@see Middleware::__invoke}, but does not need to
-     * be an object of the {@see Middleware} interface.
+     * be an object of the {@see Middleware} interface. The request-object
+     * passed to the function is always an instance of {@see ActionRequest}.
      */
     public function add(callable $middleware)
     {
         array_unshift($this->middleware, $middleware);
     }
     
+    /**
+     * Enable HTTP rewrite.
+     *
+     * @param bool $enable Enable.
+     */
     public function enableRewrite($enable = true)
     {
         $this->rewrite = $enable;
     }
     
+    /**
+     * Disable HTTP rewrite.
+     */
     public function disableRewrite()
     {
         $this->rewrite = false;
     }
 
     /**
+     * Validate a route.
      *
-     * @param string|array|Route|HasRoute $route
+     * @param string|array|Route|HasRoute $route A route array, string, or
+     * object.
      * @return Route\Route Validated route.
-     * @throws Route\RouteError
+     * @throws Route\RouteError If the route is invalid.
      * @throws \Jivoo\InvalidArgumentException If `$route` is not a recognized
      * type.
      */
@@ -191,11 +211,17 @@ class Router implements Middleware, Route\Matcher
         return $copy;
     }
     
+    /**
+     * {@inheritdoc}
+     */
     public function root($route)
     {
         return $this->match('', $route, 10);
     }
     
+    /**
+     * {@inheritdoc}
+     */
     public function error($route)
     {
         return $this->match('**', $route, 0);
@@ -264,13 +290,22 @@ class Router implements Middleware, Route\Matcher
         $route->auto($this, true);
     }
     
+    /**
+     * Add a path for a route.
+     *
+     * @param string|array|Route|HasRoute $route A route.
+     * @param string[] $pattern Path pattern.
+     * @param int|string $arity Pattern arity, i.e. number of variables. '*'
+     * for variadic.
+     * @param int $priority Path priority.
+     */
     public function addPath($route, array $pattern, $arity, $priority = 5)
     {
         $route = $this->validate($route);
         $key = $route->__toString() . '[' . $arity . ']';
         if (isset($this->paths[$key])) {
             if ($priority < $this->paths[$key]['priority']) {
-                return false;
+                return;
             }
         }
         $this->paths[$key] = [
@@ -279,6 +314,14 @@ class Router implements Middleware, Route\Matcher
         ];
     }
     
+    /**
+     * Get path for a validated route.
+     *
+     * @param \Jivoo\Http\Route\Route $route Validated route.
+     * @return string[]|string Path array or absolute path string.
+     * @throws Route\RouteException If the a path could not be found for
+     * the route.
+     */
     public function getPathValidated(Route\Route $route)
     {
         $parameters = $route->getParameters();
@@ -301,12 +344,48 @@ class Router implements Middleware, Route\Matcher
         return $path;
     }
     
+    /**
+     * Get path for a route.
+     *
+     * @param string|array|Route|HasRoute $route A route.
+     * @return string[]|string Path array or absolute path string.
+     */
     public function getPath($route)
     {
         $route = $this->validate($route);
         return $this->getPathValidated($route);
     }
     
+    /**
+     * Get URI for a route.
+     *
+     * @param string|array|Route|HasRoute $route A route.
+     * @return Message\Uri Uri.
+     */
+    public function getUri($route, $full = false)
+    {
+        $route = $this->validate($route);
+        $path = $this->getPathValidated($route);
+        if (is_string($path)) {
+            return new Message\Uri($path);
+        }
+        if ($full) {
+            $uri = $this->request->getUri()->withPath($this->request->pathToString($path));
+        } else {
+            $uri = new Message\Uri($this->request->pathToString($path));
+        }
+        $uri = $uri->withQuery(http_build_query($route->getQuery()))
+            ->withFragment($route->getFragment());
+        return $uri;
+    }
+    
+    /**
+     * Apply a path pattern to a path.
+     *
+     * @param string[] $pattern Path pattern.
+     * @param string[] $path Path.
+     * @return string[]|null An array of path parameters or null if not a match.
+     */
     public function applyPattern(array $pattern, array $path)
     {
         $length = count($pattern);
@@ -346,6 +425,13 @@ class Router implements Middleware, Route\Matcher
         return $parameters;
     }
     
+    /**
+     * Find a route for a path.
+     *
+     * @param string[] $path Path array.
+     * @param string $method Request method.
+     * @return Route|null A route or null if none found.
+     */
     public function findMatch(array $path, $method)
     {
         usort($this->patterns, ['Jivoo\Utilities', 'prioritySorter']);
@@ -389,7 +475,7 @@ class Router implements Middleware, Route\Matcher
      * @param string $fragment Fragment.
      * @param bool $permanent Whether redirect is permanent.
      * @param bool $rewrite Whether to force removal of script name from path.
-     * @return Message\Response A redirect response.
+     * @return ResponseInterface A redirect response.
      */
     public function redirectPath($path, array $query = [], $fragment = '', $permanent = false, $rewrite = false)
     {
@@ -399,10 +485,32 @@ class Router implements Middleware, Route\Matcher
         return Message\Response::redirect($location, $permanent);
     }
     
+    /**
+     * Create a route redirect.
+     *
+     * @param string|array|Route|HasRoute $route A route.
+     * @param bool $permanent Whether redirect is permanent.
+     * @return ResponseInterface A redirect response.
+     */
     public function redirect($route, $permanent = false)
     {
         $route = $this->validate($route);
         return $this->redirectPath($this->getPath($route), $route->getQuery(), $route->getFragment(), $permanent);
+    }
+    
+    /**
+     * Create a refresh response.
+     *
+     * @param array $query Optional new query parameters.
+     * @param string $fragment Optional fragment.
+     * @return ResponseInterface A refresh response.
+     */
+    public function refresh($query = null, $fragment = '')
+    {
+        if (! isset($query)) {
+            $query = $this->request->query;
+        }
+        return $this->redirectPath($this->request->path, $query, $fragment);
     }
     
     /**
