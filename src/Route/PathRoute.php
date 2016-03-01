@@ -12,9 +12,11 @@ class PathRoute extends RouteBase
 {
     private $path;
     
-    public function __construct(array $path)
+    public function __construct(array $path, array $query = [], $fragment = '')
     {
         $this->path = $path;
+        $this->query = $query;
+        $this->fragment = $fragment;
     }
     
     public function __toString()
@@ -29,7 +31,10 @@ class PathRoute extends RouteBase
 
     public function dispatch(\Jivoo\Http\ActionRequest $request, \Psr\Http\Message\ResponseInterface $response)
     {
-        // TODO
+        $location = new Message\Uri($request->pathToString($this->path));
+        $location = $location->withQuery(http_build_query($this->query))
+            ->withFragment($this->fragment);
+        return Message\Response::redirect($location, false);
     }
 
     public function getPath($pattern)

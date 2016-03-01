@@ -40,25 +40,6 @@ class RouterTest extends TestCase
         $this->assertEquals('http://example.com/foo', $router->getPath('http://example.com/foo'));
     }
     
-    public function testPathToString()
-    {
-        $router = new Router();
-        $router->addScheme(new Route\UrlScheme());
-        $router->match('foo', 'http://example.com');
-
-        $request = Message\Request::create('/index.php/foo')
-            ->withServerParams(['SCRIPT_NAME' => '/index.php']);
-        
-        $router($request, new Message\Response(Message\Status::OK));
-        
-        $this->assertEquals('/index.php', $router->pathToString([]));
-        $this->assertEquals('/', $router->pathToString([], true));
-        $this->assertEquals('/index.php/foo/bar', $router->pathToString(['foo', 'bar']));
-        $router->enableRewrite();
-        $this->assertEquals('/foo/bar', $router->pathToString(['foo', 'bar', '', '']));
-        $this->assertEquals('/foo//bar', $router->pathToString(['foo', '', 'bar']));
-    }
-    
     public function testRedirect()
     {
         $router = new Router();

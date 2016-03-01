@@ -17,13 +17,15 @@ class PathScheme implements Scheme
         if (is_string($path)) {
             $path = explode('/', trim($path, '/'));
         }
-        return new PathRoute($path);
+        return new PathRoute($path, $route['query'], $route['fragment']);
     }
 
     public function fromString($routeString)
     {
-        $path = substr($routeString, 5);
-        return $this->fromArray(['path' => $path]);
+        $route = [];
+        $routeString = RouteBase::stripAttributes($routeString, $route);
+        $route['path'] = substr($routeString, 5);
+        return $this->fromArray($route);
     }
 
     public function getKeys()

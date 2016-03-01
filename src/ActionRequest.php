@@ -12,6 +12,7 @@ namespace Jivoo\Http;
  * '/foo/index.php/bar'.
  * @property-read string $scriptName Entry script name, e.g. 'index.php' in
  * '/foo/index.php/bar'.
+ * @property-read bool $rewrite Whether HTTP rewrite is enabled.
  * @property-read string $method Request method.
  * @property-read Message\Uri $uri Request URI.
  * @property-read array $data POST/PUT/PATCH data.
@@ -56,6 +57,10 @@ class ActionRequest extends Message\Message implements \Psr\Http\Message\ServerR
             $this->attributes['path'] = self::findPath($this);
         }
         
+        if (! isset($this->attributes['rewrite'])) {
+            $this->attributes['rewrite'] = false;
+        }
+        
         if (! isset($this->attributes['accepts'])) {
             $this->attributes['accepts'] = [];
             if (isset($this->server['HTTP_ACCEPT'])) {
@@ -90,6 +95,7 @@ class ActionRequest extends Message\Message implements \Psr\Http\Message\ServerR
             case 'path':
             case 'basePath':
             case 'scriptName':
+            case 'rewrite':
                 return $this->getAttribute($property);
             case 'method':
             case 'uri':
@@ -192,6 +198,33 @@ class ActionRequest extends Message\Message implements \Psr\Http\Message\ServerR
     {
         return isset($this->server['HTTP_X_REQUESTED_WITH'])
             and $this->server['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest';
+    }
+    
+    /**
+     * Convert path array to a string.
+     *
+     * @param string|string[] $path Path array or absolute url.
+     * @param bool $rewrite Whether to force removal of script name from path.
+     * @return string Path string.
+     */
+    public function pathToString($path, $rewrite = false)
+    {
+        if (is_string($path)) {
+            return $path;
+        }
+        $str = $this->basePath;
+        if ($str == '/') {
+            $str = '';
+        }
+        if (! ($this->rewrite or $rewrite)) {
+            $str .= '/' . $this->scriptName;
+        }
+        $str .= '/' . implode('/', array_map('urlencode', $path));
+        $str = rtrim($str, '/');
+        if ($str == '') {
+            return '/';
+        }
+        return $str;
     }
     
     public static function findPath(\Psr\Http\Message\ServerRequestInterface $request)

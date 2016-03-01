@@ -393,7 +393,7 @@ class Router implements Middleware, Route\Matcher
      */
     public function redirectPath($path, array $query = [], $fragment = '', $permanent = false, $rewrite = false)
     {
-        $location = new Message\Uri($this->pathToString($path, $rewrite));
+        $location = new Message\Uri($this->request->pathToString($path, $rewrite));
         $location = $location->withQuery(http_build_query($query))
             ->withFragment($fragment);
         return Message\Response::redirect($location, $permanent);
@@ -412,6 +412,7 @@ class Router implements Middleware, Route\Matcher
     {
         $this->request = new ActionRequest($request);
         
+        $this->request = $this->request->withAttribute('rewrite', $this->rewrite);
         $path = $this->request->path;
         if (! $this->rewrite) {
             if (!isset($path[0]) or $path[0] != $this->request->scriptName) {
@@ -433,32 +434,5 @@ class Router implements Middleware, Route\Matcher
         $first = $this->getNext($middleware, [$this->route, 'dispatch']);
         $response = $first($this->request, $response);
         return $response;
-    }
-    
-    /**
-     * Convert path array to a string.
-     *
-     * @param string|string[] $path Path array or absolute url.
-     * @param bool $rewrite Whether to force removal of script name from path.
-     * @return string Path string.
-     */
-    public function pathToString($path, $rewrite = false)
-    {
-        if (is_string($path)) {
-            return $path;
-        }
-        $str = $this->request->basePath;
-        if ($str == '/') {
-            $str = '';
-        }
-        if (! ($this->rewrite or $rewrite)) {
-            $str .= '/' . $this->request->scriptName;
-        }
-        $str .= '/' . implode('/', array_map('urlencode', $path));
-        $str = rtrim($str, '/');
-        if ($str == '') {
-            return '/';
-        }
-        return $str;
     }
 }

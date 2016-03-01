@@ -60,4 +60,21 @@ abstract class RouteBase implements Route
         $route->parameters = [];
         return $route;
     }
+    
+    public static function stripAttributes($routeString, &$route, $withParameters = true)
+    {
+        $regex = '/^(.*?)(?:\?([^?#]*))?(?:#([^#?]*))?$/';
+        preg_match($regex, $routeString, $matches);
+        if (isset($matches[2])) {
+            parse_str($matches[2], $query);
+            $route['query'] = $query;
+        }
+        if (isset($matches[3])) {
+            $route['fragment'] = $matches[3];
+        }
+        if ($withParameters) {
+            // TODO
+        }
+        return $matches[1];
+    }
 }

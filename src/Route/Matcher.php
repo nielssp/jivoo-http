@@ -10,7 +10,7 @@ namespace Jivoo\Http\Route;
  */
 interface Matcher
 {
-    
+       
     /**
      *
      * @param string|array $patternOrPatterns

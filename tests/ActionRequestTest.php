@@ -37,6 +37,22 @@ class ActionRequestTest extends TestCase
         $this->assertTrue($arequest->isAjax());
     }
     
+    public function testPathToString()
+    {
+        $request = new ActionRequest(
+            Message\Request::create('/index.php/foo')
+                ->withServerParams(['SCRIPT_NAME' => '/index.php'])
+        );
+        
+        $this->assertEquals('/index.php', $request->pathToString([]));
+        $this->assertEquals('/', $request->pathToString([], true));
+        $this->assertEquals('/index.php/foo/bar', $request->pathToString(['foo', 'bar']));
+        
+        $request = $request->withAttribute('rewrite', true);
+        $this->assertEquals('/foo/bar', $request->pathToString(['foo', 'bar', '', '']));
+        $this->assertEquals('/foo//bar', $request->pathToString(['foo', '', 'bar']));
+    }
+    
     public function testFindPath()
     {
         $request = Message\Request::create('/foo/index.php/foo/bar');
