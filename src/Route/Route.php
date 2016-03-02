@@ -82,6 +82,9 @@ interface Route
      *
      * @param \Jivoo\Http\Route\Matcher $matcher
      * @param bool $resource
+     * @return string|null Pattern to use for nested routing or null if nesting
+     * is not possible.
+     * @throws RouteException If auto routing is not possible.
      */
     public function auto(Matcher $matcher, $resource = false);
 }

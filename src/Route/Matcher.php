@@ -39,14 +39,14 @@ interface Matcher
     /**
      *
      * @param string|array|Route|HasRoute $route
-     * @return Matcher
+     * @return Matcher|null
      */
     public function auto($route);
     
     /**
      *
      * @param string|array|Route|HasRoute A route.
-     * @return Matcher
+     * @return Matcher|null
      */
     public function resource($route);
 }

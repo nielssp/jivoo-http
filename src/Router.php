@@ -216,7 +216,7 @@ class Router implements Middleware, Route\Matcher
      */
     public function root($route)
     {
-        return $this->match('', $route, 10);
+        $this->match('', $route, 10);
     }
     
     /**
@@ -224,7 +224,7 @@ class Router implements Middleware, Route\Matcher
      */
     public function error($route)
     {
-        return $this->match('**', $route, 0);
+        $this->match('**', $route, 0);
     }
     
     /**
@@ -236,7 +236,7 @@ class Router implements Middleware, Route\Matcher
             foreach ($patternOrPatterns as $pattern => $route) {
                 $this->match($pattern, $route);
             }
-            return;
+            return null;
         }
         $pattern = $patternOrPatterns;
         $route = $this->validate($route);
@@ -253,7 +253,7 @@ class Router implements Middleware, Route\Matcher
         
         $arity = 0;
         foreach ($pattern as $part) {
-            if ($part == '**' || $part == ':*') {
+            if ($part == '**' or $part == ':*') {
                 $arity = '*';
                 break;
             } elseif ($part == '*') {
@@ -270,6 +270,8 @@ class Router implements Middleware, Route\Matcher
             'route' => $route,
             'priority' => $priority
         ];
+        
+        return new Route\NestedMatcher($this, [$this, 'validate'], $patternOrPatterns);
     }
 
     /**
@@ -278,7 +280,11 @@ class Router implements Middleware, Route\Matcher
     public function auto($route)
     {
         $route = $this->validate($route);
-        $route->auto($this, false);
+        $pattern = $route->auto($this, false);
+        if (! isset($pattern)) {
+            return null;
+        }
+        return new Route\NestedMatcher($this, $this->validator, $pattern);
     }
 
     /**
@@ -287,7 +293,11 @@ class Router implements Middleware, Route\Matcher
     public function resource($route)
     {
         $route = $this->validate($route);
-        $route->auto($this, true);
+        $pattern = $route->auto($this, true);
+        if (! isset($pattern)) {
+            return null;
+        }
+        return new Route\NestedMatcher($this, $this->validator, $pattern);
     }
     
     /**
