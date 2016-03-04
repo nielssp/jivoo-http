@@ -77,4 +77,37 @@ abstract class RouteBase implements Route
         }
         return $matches[1];
     }
+    
+    /**
+     * Will replace **, :*, * and :foo in path with parameters.
+     * 
+     * @param string[] $pattern Path pattern.
+     * @param array $parameters Array of parameters.
+     * @return string[] Resulting path.
+     */
+    public static function insertParameters(array $pattern, array $parameters)
+    {
+        $result = array();
+        foreach ($path as $part) {
+            if ($part == '**' or $part == ':*') {
+                while (current($parameters) !== false) {
+                    $result[] = array_shift($parameters);
+                }
+                break;
+            } else if ($part == '*') {
+                $part = array_shift($parameters);
+            } else if ($part[0] == ':') {
+                $var = substr($part, 1);
+                if (is_numeric($var)) {
+                    $offset = (int) $var;
+                    $part = $parameters[$offset];
+                    unset($parameters[$offset]);
+                } else {
+                    $part = $parameters[$var];
+                }
+            }
+            $result[] = $part;
+        }
+        return $result;
+    }
 }

@@ -405,7 +405,7 @@ class Router implements Middleware, Route\Matcher
         }
         $parameters = [];
         foreach ($pattern as $j => $part) {
-            if ($part == '**' || $part == ':*') {
+            if ($part == '**' or $part == ':*') {
                 $parameters = array_merge(
                     $parameters,
                     array_slice($path, $j)
