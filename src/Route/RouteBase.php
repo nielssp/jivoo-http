@@ -80,7 +80,7 @@ abstract class RouteBase implements Route
     
     /**
      * Will replace **, :*, * and :foo in path with parameters.
-     * 
+     *
      * @param string[] $pattern Path pattern.
      * @param array $parameters Array of parameters.
      * @return string[] Resulting path.
@@ -94,9 +94,9 @@ abstract class RouteBase implements Route
                     $result[] = array_shift($parameters);
                 }
                 break;
-            } else if ($part == '*') {
+            } elseif ($part == '*') {
                 $part = array_shift($parameters);
-            } else if ($part[0] == ':') {
+            } elseif ($part[0] == ':') {
                 $var = substr($part, 1);
                 if (is_numeric($var)) {
                     $offset = (int) $var;
