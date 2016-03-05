@@ -88,7 +88,7 @@ abstract class RouteBase implements Route
     public static function insertParameters(array $pattern, array $parameters)
     {
         $result = array();
-        foreach ($path as $part) {
+        foreach ($pattern as $part) {
             if ($part == '**' or $part == ':*') {
                 while (current($parameters) !== false) {
                     $result[] = array_shift($parameters);
@@ -98,13 +98,8 @@ abstract class RouteBase implements Route
                 $part = array_shift($parameters);
             } elseif ($part[0] == ':') {
                 $var = substr($part, 1);
-                if (is_numeric($var)) {
-                    $offset = (int) $var;
-                    $part = $parameters[$offset];
-                    unset($parameters[$offset]);
-                } else {
-                    $part = $parameters[$var];
-                }
+                $part = $parameters[$var];
+                unset($parameters[$var]);
             }
             $result[] = $part;
         }
