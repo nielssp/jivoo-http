@@ -10,19 +10,21 @@ namespace Jivoo\Http\Route;
  */
 class AssetRoute extends RouteBase
 {
-    private $asset;
     
-    private $file;
-    
-    public function __construct($asset, $file)
+    /**
+     * @var AssetScheme
+     */
+    private $scheme;
+
+    public function __construct(AssetScheme $scheme, array $parameters)
     {
-        $this->asset = $asset;
-        $this->file = $file;
+        $this->scheme = $scheme;
+        $this->parameters = $parameters;
     }
     
     public function __toString()
     {
-        return 'asset:' . $this->asset;
+        return 'asset:' . implode('/', $this->parameters);
     }
 
     public function auto(Matcher $matcher, $resource = false)
@@ -32,15 +34,19 @@ class AssetRoute extends RouteBase
 
     public function dispatch(\Jivoo\Http\ActionRequest $request, \Psr\Http\Message\ResponseInterface $response)
     {
+        $file = $this->scheme->find(implode('/', $this->parameters));
+        if (! isset($file)) {
+            return; // TODO: how to handle 'not found'?
+        }
         $type = null; // TODO: Find MIME type
-        return \Jivoo\Http\Message\Response::file($this->file, $type);
+        return \Jivoo\Http\Message\Response::file($file, $type);
     }
 
     public function getPath($pattern)
     {
         if (isset($pattern)) {
-            return RouteBase::insertParameters($pattern, explode('/', $this->asset));
+            return RouteBase::insertParameters($pattern, $this->parameters);
         }
-        return $this->asset;
+        return $this->parameters;
     }
 }
