@@ -40,4 +40,26 @@ class AssetSchemeTest extends TestCase
         
         $this->assertEquals('/* Empty test file used in AssetSchemeTest */', $response->getBody()->getContents());
     }
+    
+    public function testRouting()
+    {
+        $router = new \Jivoo\Http\Router();
+        
+        $assets = new AssetScheme('tests/data/assets');
+        $router->addScheme($assets);
+        
+        $router->match('assets/**', 'asset:');
+        
+        $route = $router->findMatch(['assets', 'css', 'foo.css'], 'GET');
+        $this->assertInstanceOf('Jivoo\Http\Route\AssetRoute', $route);
+        $this->assertEquals(['css', 'foo.css'], $route->getParameters());
+        $this->assertEquals('asset:css/foo.css', $route->__toString());
+        
+        $response = $router(
+            \Jivoo\Http\Message\Request::create('/index.php/assets/css/foo.css'),
+            new Response(Status::OK)
+        );
+        
+        $this->assertEquals('/* Empty test file used in AssetSchemeTest */', $response->getBody()->getContents());
+    }
 }
