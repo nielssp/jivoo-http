@@ -24,6 +24,11 @@ class SapiServer extends EventSubjectBase
     private $request;
     
     /**
+     * @var Cookie\CookiePool|null
+     */
+    private $cookies;
+    
+    /**
      * @var callable
      */
     private $handler;
@@ -58,6 +63,20 @@ class SapiServer extends EventSubjectBase
         }
         $this->request = $request;
     }
+    
+    /**
+     * @return Cookie\CookiePool
+     */
+    public function getCookies()
+    {
+        if (! isset($this->cookies)) {
+            $this->cookies = new Cookie\CookiePool();
+            foreach ($this->request->getCookieParams() as $name => $value) {
+                $this->cookies[$name] = $value;
+            }
+        }
+        return $this->cookies;
+    }
 
     /**
      * Add middleware.
@@ -75,9 +94,10 @@ class SapiServer extends EventSubjectBase
      * Serve a response.
      *
      * @param ResponseInterface $response The response.
+     * @param Cookie\ResponseCookie[]|\Traversable $cookies
      * @throws HeadersSentException If the headers have already been sent.
      */
-    protected function serve(ResponseInterface $response)
+    public function serve(ResponseInterface $response, $cookies = [])
     {
         if (headers_sent($file, $line)) {
             throw new HeadersSentException(
@@ -85,6 +105,7 @@ class SapiServer extends EventSubjectBase
             );
         }
         $this->serveStatus($response);
+        $this->serveCookies($cookies);
         $this->serveHeaders($response);
         $this->serveBody($response);
     }
@@ -103,6 +124,34 @@ class SapiServer extends EventSubjectBase
             $reason = ' ' . $reason;
         }
         header('HTTP/' . $protocol . ' ' . $status . $reason);
+    }
+    
+    /**
+     * Set the cookies.
+     *
+     * @param Cookie\ResponseCookie[]|\Traversable $cookies
+     */
+    protected function serveCookies($cookies)
+    {
+        foreach ($cookies as $cookie) {
+            if ($cookie->hasChanged()) {
+                $expiration = $cookie->getExpiration();
+                if (isset($expiration)) {
+                    $expiration = $expiration->getTimestamp();
+                } else {
+                    $expiration = 0;
+                }
+                setcookie(
+                    $cookie->getName(),
+                    $cookie->get(),
+                    $expiration,
+                    $cookie->getPath(),
+                    $cookie->getDomain(),
+                    $cookie->isSecure(),
+                    $cookie->isHttpOnly()
+                );
+            }
+        }
     }
     
     /**
@@ -164,6 +213,6 @@ class SapiServer extends EventSubjectBase
         $response = new Response(Status::OK);
         $first = $this->getNext($this->middleware);
         $response = $first($request, $response);
-        $this->serve($response);
+        $this->serve($response, $this->getCookies());
     }
 }
