@@ -6,27 +6,57 @@
 namespace Jivoo\Http\Cookie;
 
 /**
- * A mutable cookie linked to a {@see CookiePool}.
+ * A mutable cookie.
  */
 class MutableCookie implements ResponseCookie
 {
     
+    /**
+     * @var bool
+     */
     private $changed = false;
     
+    /**
+     * @var string
+     */
     private $name;
     
+    /**
+     * @var string
+     */
     private $value;
     
+    /**
+     * @var string
+     */
     private $path = '';
     
+    /**
+     * @var string
+     */
     private $domain = '';
     
+    /**
+     * @var bool
+     */
     private $secure = false;
     
+    /**
+     * @var bool
+     */
     private $httpOnly = false;
     
+    /**
+     * @var \DateTimeInterface|null
+     */
     private $expiration;
     
+    /**
+     * Construct mutable cookie.
+     *
+     * @param string $name Cookie name.
+     * @param string $value Cookie value.
+     */
     public function __construct($name, $value = '')
     {
         $this->name = $name;

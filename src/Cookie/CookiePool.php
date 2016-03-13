@@ -6,7 +6,7 @@
 namespace Jivoo\Http\Cookie;
 
 /**
- * Description of CookiePool
+ * A mutable collection of cookies.
  */
 class CookiePool implements \ArrayAccess, \IteratorAggregate
 {
@@ -17,8 +17,9 @@ class CookiePool implements \ArrayAccess, \IteratorAggregate
     private $cookies = [];
     
     /**
+     * Add a cookie to the pool.
      *
-     * @param \Jivoo\Http\Cookie\Cookie $cookie
+     * @param Cookie $cookie A cookie.
      */
     public function add(Cookie $cookie)
     {
@@ -37,9 +38,10 @@ class CookiePool implements \ArrayAccess, \IteratorAggregate
     }
     
     /**
+     * Whether a cookie exists and is non-empty.
      *
-     * @param string $name
-     * @return bool
+     * @param string $name Cookie name.
+     * @return bool True if cookie has a non-empty value.
      */
     public function offsetExists($name)
     {
@@ -47,9 +49,10 @@ class CookiePool implements \ArrayAccess, \IteratorAggregate
     }
 
     /**
+     * Get a cookie.
      *
-     * @param string $name
-     * @return MutableCookie
+     * @param string $name Cookie name.
+     * @return MutableCookie A mutable cookie.
      */
     public function offsetGet($name)
     {
@@ -60,9 +63,10 @@ class CookiePool implements \ArrayAccess, \IteratorAggregate
     }
 
     /**
+     * Set the value of a cookie.
      *
-     * @param string $name
-     * @param string $value
+     * @param string $name Cookie name.
+     * @param string $value Cookie value.
      */
     public function offsetSet($name, $value)
     {
@@ -70,14 +74,20 @@ class CookiePool implements \ArrayAccess, \IteratorAggregate
     }
 
     /**
+     * Unset a cookie, i.e. set its value to the empty string.
      *
-     * @param string $name
+     * @param string $name Cookie name.
      */
     public function offsetUnset($name)
     {
         $this[$name]->set('');
     }
 
+    /**
+     * Create an iterator of the cookies in the collection.
+     *
+     * @return Iterator
+     */
     public function getIterator()
     {
         return new \ArrayIterator($this->cookies);

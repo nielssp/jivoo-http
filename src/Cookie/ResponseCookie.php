@@ -6,7 +6,7 @@
 namespace Jivoo\Http\Cookie;
 
 /**
- * A response cookie.
+ * A cookie sent as part of a response.
  */
 interface ResponseCookie extends Cookie
 {
