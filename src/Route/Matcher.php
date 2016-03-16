@@ -28,11 +28,15 @@ interface Matcher
     public function error($route);
        
     /**
+     * Match one or more patterns.
      *
-     * @param string|array $patternOrPatterns
-     * @param string|array|Route|HasRoute|null $route
-     * @param int $priority
-     * @return Matcher|null
+     * @param string|array $patternOrPatterns A single pattern or an associative
+     * array mapping patterns to routes.
+     * @param string|array|Route|HasRoute|null $route A route, see
+     * {@see \Jivoo\Http\Router}.
+     * @param int $priority Priority of pattern.
+     * @return Matcher|null A nested matcher (if single pattern) or null (if
+     * multiple patterns).
      */
     public function match($patternOrPatterns, $route = null, $priority = 5);
     
