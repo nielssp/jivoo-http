@@ -16,11 +16,23 @@ class AssetScheme implements Scheme
      */
     private $paths = [];
     
+    /**
+     * Construct asset scheme.
+     *
+     * @param string $defaultPath Default asset-path.
+     */
     public function __construct($defaultPath)
     {
         $this->addPath('/', $defaultPath);
     }
     
+    /**
+     * Add an asset path.
+     *
+     * @param string $namespace Asset namespace.
+     * @param string $path Path.
+     * @param int $priority Path priority.
+     */
     public function addPath($namespace, $path, $priority = 5)
     {
         if ($path != '') {
@@ -38,6 +50,12 @@ class AssetScheme implements Scheme
         usort($this->paths[$namespace], ['Jivoo\Utilities', 'prioritySorter']);
     }
     
+    /**
+     * Find an asset.
+     *
+     * @param string $asset Asset name.
+     * @return string|null Asset path on server, or null if not found.
+     */
     public function find($asset)
     {
         $asset = trim($asset, '/');
@@ -57,6 +75,13 @@ class AssetScheme implements Scheme
         return null;
     }
     
+    /**
+     * Find an asset in a namsepace.
+     *
+     * @param string $asset Asset name.
+     * @param string $namespace Namespace.
+     * @return string|null Asset path on server, or null if not found.
+     */
     public function findIn($asset, $namespace)
     {
         if (! isset($this->paths[$namespace])) {
@@ -71,6 +96,9 @@ class AssetScheme implements Scheme
         return null;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function fromArray(array $route)
     {
         $parameters = array_merge(
@@ -80,16 +108,25 @@ class AssetScheme implements Scheme
         return new AssetRoute($this, $parameters);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function fromString($routeString)
     {
         return new AssetRoute($this, explode('/', substr($routeString, 6)));
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getKeys()
     {
         return ['asset'];
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPrefixes()
     {
         return ['asset'];

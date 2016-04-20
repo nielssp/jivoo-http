@@ -11,6 +11,9 @@ namespace Jivoo\Http\Route;
 class PathScheme implements Scheme
 {
 
+    /**
+     * {@inheritdoc}
+     */
     public function fromArray(array $route)
     {
         $path = $route['path'];
@@ -20,6 +23,9 @@ class PathScheme implements Scheme
         return new PathRoute($path, $route['query'], $route['fragment']);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function fromString($routeString)
     {
         $route = [];
@@ -28,11 +34,17 @@ class PathScheme implements Scheme
         return $this->fromArray($route);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getKeys()
     {
         return ['path'];
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPrefixes()
     {
         return ['path'];

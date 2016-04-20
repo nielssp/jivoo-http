@@ -23,42 +23,55 @@ interface Route
     public function __toString();
     
     /**
+     * Get the query parameters.
+     *
      * @return string[]
      */
     public function getQuery();
     
     /**
+     * Get the fragment.
+     *
      * @return string
      */
     public function getFragment();
     
     /**
+     * Get path for route.
      *
      * @param string[]|null $pattern Pattern or null if no pattern has been
      * created for this route.
-     * @return string|string[]
+     * @return string|string[] A path as a string (absolute) or as a path array.
      */
     public function getPath($pattern);
     
     /**
+     * Get the route parameters.
+     *
      * @return string[]
      */
     public function getParameters();
     
     /**
-     * @param array $query
+     * Set query parameters.
+     *
+     * @param string[] $query Query parameters.
      * @return static
      */
     public function withQuery(array $query);
     
     /**
-     * @param string $fragment
+     * Set fragment.
+     *
+     * @param string $fragment Fragment.
      * @return static
      */
     public function withFragment($fragment);
     
     /**
-     * @param array $parameters
+     * Set route parameters.
+     *
+     * @param string[] $parameters Route parameters.
      * @return static
      */
     public function withParameters(array $parameters);
@@ -71,17 +84,19 @@ interface Route
     public function withoutAttributes();
     
     /**
+     * Dispatch route, i.e. create a response.
      *
-     * @param ActionRequest $request
-     * @param ResponseInterface $response
-     * @return ResponseInterface
+     * @param ActionRequest $request Request.
+     * @param ResponseInterface $response Input response
+     * @return ResponseInterface Output response.
      */
     public function dispatch(ActionRequest $request, ResponseInterface $response);
     
     /**
+     * Perform auto routing.
      *
-     * @param \Jivoo\Http\Route\Matcher $matcher
-     * @param bool $resource
+     * @param \Jivoo\Http\Route\Matcher $matcher Route matcher.
+     * @param bool $resource Whether to route as a resource.
      * @return string|null Pattern to use for nested routing or null if nesting
      * is not possible.
      * @throws RouteException If auto routing is not possible.

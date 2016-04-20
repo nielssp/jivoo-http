@@ -6,16 +6,33 @@
 namespace Jivoo\Http\Route;
 
 /**
- * Description of NestedMatcher
+ * A nested route matcher.
  */
 class NestedMatcher implements Matcher
 {
+    
+    /**
+     * @var Matcher
+     */
     private $parent;
     
+    /**
+     * @var callable
+     */
     private $validator;
     
+    /**
+     * @var string
+     */
     private $prefix;
     
+    /**
+     * Construct nested matcher.
+     *
+     * @param \Jivoo\Http\Route\Matcher $parent Parent matcher.
+     * @param \Jivoo\Http\Route\callable $validator Route validator function.
+     * @param string $prefix Path prefix.
+     */
     public function __construct(Matcher $parent, callable $validator, $prefix = '')
     {
         $this->parent = $parent;

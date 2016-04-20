@@ -16,22 +16,37 @@ class AssetRoute extends RouteBase
      */
     private $scheme;
 
+    /**
+     * Construct asset route.
+     *
+     * @param \Jivoo\Http\Route\AssetScheme $scheme Asset scheme.
+     * @param string[] $parameters Route parameters.
+     */
     public function __construct(AssetScheme $scheme, array $parameters)
     {
         $this->scheme = $scheme;
         $this->parameters = $parameters;
     }
     
+    /**
+     * {@inheritdoc}
+     */
     public function __toString()
     {
         return 'asset:' . implode('/', $this->parameters);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function auto(Matcher $matcher, $resource = false)
     {
         throw new RouteException('It is not possible to autoroute a single asset');
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function dispatch(\Jivoo\Http\ActionRequest $request, \Psr\Http\Message\ResponseInterface $response)
     {
         $file = $this->scheme->find(implode('/', $this->parameters));
@@ -42,6 +57,9 @@ class AssetRoute extends RouteBase
         return \Jivoo\Http\Message\Response::file($file, $type);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPath($pattern)
     {
         if (isset($pattern)) {

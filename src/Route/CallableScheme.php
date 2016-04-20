@@ -6,25 +6,37 @@
 namespace Jivoo\Http\Route;
 
 /**
- * URL-based routes.
+ * Callable-based routing.
  */
 class CallableScheme implements Scheme
 {
 
+    /**
+     * {@inheritdoc}
+     */
     public function fromArray(array $route)
     {
         return new CallableRoute($route['callable'], $route['parameters']);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function fromString($routeString)
     {
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getKeys()
     {
         return ['callable'];
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPrefixes()
     {
         return [];

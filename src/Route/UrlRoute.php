@@ -6,12 +6,21 @@
 namespace Jivoo\Http\Route;
 
 /**
- * Description of UrlRoute
+ * URL route. Redirects to a URL.
  */
 class UrlRoute extends RouteBase
 {
+    
+    /**
+     * @var string
+     */
     private $url;
     
+    /**
+     * Construct URL route.
+     *
+     * @param string $url URL.
+     */
     public function __construct($url)
     {
         if (strpos($url, '?') === false and strpos($url, '#') === false) {
@@ -32,6 +41,9 @@ class UrlRoute extends RouteBase
         }
     }
     
+    /**
+     * {@inheritdoc}
+     */
     public function __toString()
     {
         $url = $this->getUrl();
@@ -41,21 +53,33 @@ class UrlRoute extends RouteBase
         return 'url:' . $url;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function auto(Matcher $matcher, $resource = false)
     {
         throw new RouteException('It is not possible to autoroute a URL');
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function dispatch(\Jivoo\Http\ActionRequest $request, \Psr\Http\Message\ResponseInterface $response)
     {
         return \Jivoo\Http\Message\Response::redirect($this->getUrl());
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPath($pattern)
     {
         return $this->getUrl();
     }
     
+    /**
+     * {@inheritdoc}
+     */
     public function getUrl()
     {
         $url = $this->url;

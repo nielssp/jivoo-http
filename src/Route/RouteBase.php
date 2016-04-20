@@ -6,21 +6,43 @@
 namespace Jivoo\Http\Route;
 
 /**
- * Implements
+ * Implements {@see Route}
  */
 abstract class RouteBase implements Route
 {
+    
+    /**
+     * Query parameters.
+     *
+     * @var string[]
+     */
     protected $query = [];
     
+    /**
+     * Path parameters.
+     *
+     * @var string[]
+     */
     protected $parameters = [];
     
+    /**
+     * Fragment.
+     *
+     * @var string
+     */
     protected $fragment = '';
     
+    /**
+     * {@inheritdoc}
+     */
     public function getQuery()
     {
         return $this->query;
     }
     
+    /**
+     * {@inheritdoc}
+     */
     public function withQuery(array $query)
     {
         $route = clone $this;
@@ -28,11 +50,17 @@ abstract class RouteBase implements Route
         return $route;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParameters()
     {
         return $this->parameters;
     }
     
+    /**
+     * {@inheritdoc}
+     */
     public function withParameters(array $parameters)
     {
         $route = clone $this;
@@ -40,11 +68,17 @@ abstract class RouteBase implements Route
         return $route;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getFragment()
     {
         return $this->fragment;
     }
     
+    /**
+     * {@inheritdoc}
+     */
     public function withFragment($fragment)
     {
         $route = clone $this;
@@ -52,6 +86,9 @@ abstract class RouteBase implements Route
         return $route;
     }
     
+    /**
+     * {@inheritdoc}
+     */
     public function withoutAttributes()
     {
         $route = clone $this;
@@ -61,6 +98,15 @@ abstract class RouteBase implements Route
         return $route;
     }
     
+    /**
+     * Strip fragment, query and optionally parameters from a route string.
+     *
+     * @param string $routeString The route string.
+     * @param array $route A route array to insert attributes into.
+     * @param bool $withParameters Whether to also read parameters from the
+     * route string.
+     * @return string The route string without attributes.
+     */
     public static function stripAttributes($routeString, &$route, $withParameters = true)
     {
         $regex = '/^(.*?)(?:\?([^?#]*))?(?:#([^#?]*))?$/';
@@ -73,7 +119,7 @@ abstract class RouteBase implements Route
             $route['fragment'] = $matches[3];
         }
         if ($withParameters) {
-            // TODO
+            // TODO: implement
         }
         return $matches[1];
     }

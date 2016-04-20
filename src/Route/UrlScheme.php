@@ -11,11 +11,17 @@ namespace Jivoo\Http\Route;
 class UrlScheme implements Scheme
 {
 
+    /**
+     * {@inheritdoc}
+     */
     public function fromArray(array $route)
     {
         return new UrlRoute($route['url']);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function fromString($routeString)
     {
         if (strncmp($routeString, 'url:', 4) === 0) {
@@ -24,11 +30,17 @@ class UrlScheme implements Scheme
         return new UrlRoute($routeString);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getKeys()
     {
         return ['url'];
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPrefixes()
     {
         return ['url', 'http', 'https'];
