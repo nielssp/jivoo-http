@@ -16,14 +16,28 @@ class AssetScheme implements Scheme
      */
     private $paths = [];
     
+    private $errorHandler;
+    
     /**
      * Construct asset scheme.
      *
      * @param string $defaultPath Default asset-path.
+     * @param callable|null $errorHandler A request handler. Called when an asset
+     * does not exist.
      */
-    public function __construct($defaultPath)
+    public function __construct($defaultPath, $errorHandler = null)
     {
         $this->addPath('/', $defaultPath);
+        $this->errorHandler = $errorHandler;
+    }
+    
+    public function handleError(\Jivoo\Http\ActionRequest $request, \Psr\Http\Message\ResponseInterface $response)
+    {
+        if (isset($this->errorHandler)) {
+            return call_user_func($this->errorHandler, $request, $response);
+        }
+        return $response->withBody(new \Jivoo\Http\Message\StringStream('Asset not found'))
+            ->withStatus(\Jivoo\Http\Message\Status::NOT_FOUND);
     }
     
     /**

@@ -51,7 +51,7 @@ class AssetRoute extends RouteBase
     {
         $file = $this->scheme->find(implode('/', $this->parameters));
         if (! isset($file)) {
-            return; // TODO: how to handle 'not found'?
+            return $this->scheme->handleError($request, $response);
         }
         $type = null; // TODO: Find MIME type
         return \Jivoo\Http\Message\Response::file($file, $type);
