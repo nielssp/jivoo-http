@@ -31,7 +31,7 @@ class CookiePool implements \ArrayAccess, \IteratorAggregate
                 ->setDomain($cookie->getDomain())
                 ->setSecure($cookie->isSecure())
                 ->setHttpOnly($cookie->isHttpOnly())
-                ->setExpiration($cookie->getExpiration());
+                ->expiresAt($cookie->getExpiration());
         } else {
             $this->cookies[$cookie->getName()] = new MutableCookie($cookie->getName(), $cookie->get());
         }

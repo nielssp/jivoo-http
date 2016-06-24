@@ -133,10 +133,11 @@ class Router implements Middleware, Route\Matcher
         }
         if (is_string($route)) {
             if ($route == '') {
-                if (isset($this->root)) {
-                    return $this->root;
+                $route = $this->findMatch([], 'GET');
+                if (! isset($route)) {
+                    throw new Route\RouteException('No root route');
                 }
-                $route = ['path' => []];
+                return $route;
             } else {
                 if (preg_match('/^([a-zA-Z0-9\.\-+]+):/', $route, $matches) === 1) {
                     $prefix = $matches[1];
@@ -250,6 +251,10 @@ class Router implements Middleware, Route\Matcher
             $pattern = $pattern[0];
         }
         $pattern = explode('/', trim($pattern, '/'));
+        
+        if ($pattern == ['']) {
+            $pattern = [];
+        }
         
         $arity = 0;
         foreach ($pattern as $part) {

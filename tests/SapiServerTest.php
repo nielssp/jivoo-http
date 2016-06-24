@@ -10,7 +10,9 @@ class SapiServerTest extends TestCase
 
     public function testListen()
     {
-        $server = $this->getMock('Jivoo\Http\SapiServer', ['serve']);
+        $server = $this->getMockBuilder('Jivoo\Http\SapiServer')
+            ->setMethods(['serve'])
+            ->getMock();
         
         $response1 = new Message\Response(200);
         $response2 = new Message\Response(200);

@@ -19,6 +19,12 @@ class PhpStreamTest extends \Jivoo\TestCase
         $this->stream->close();
     }
     
+    public function testDetach()
+    {
+        $this->assertInternalType('resource', $this->stream->detach());
+        $this->assertFalse($this->stream->isWritable());
+    }
+    
     public function testReading()
     {
         $this->stream->write('foobar');

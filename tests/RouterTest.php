@@ -24,6 +24,9 @@ class RouterTest extends TestCase
         ]);
         $this->assertInstanceOf('Jivoo\Http\Route\CallableRoute', $callable);
         $this->assertEquals(['foo', 'bar'], $callable->getParameters());
+        
+        $router->root('http://example.com');
+        $this->assertEquals('http://example.com', $router->validate(''));
     }
     
     public function testGetPath()
