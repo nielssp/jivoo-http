@@ -16,6 +16,9 @@ class AssetScheme implements Scheme
      */
     private $paths = [];
     
+    /**
+     * @var callable|null
+     */
     private $errorHandler;
     
     /**
@@ -31,6 +34,13 @@ class AssetScheme implements Scheme
         $this->errorHandler = $errorHandler;
     }
     
+    /**
+     * Create the error response.
+     *
+     * @param \Jivoo\Http\ActionRequest $request Request.
+     * @param \Psr\Http\Message\ResponseInterface $response Response.
+     * @return \Psr\Http\Message\ResponseInterface Error response.
+     */
     public function handleError(\Jivoo\Http\ActionRequest $request, \Psr\Http\Message\ResponseInterface $response)
     {
         if (isset($this->errorHandler)) {
