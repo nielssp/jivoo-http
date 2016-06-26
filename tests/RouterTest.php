@@ -19,11 +19,12 @@ class RouterTest extends TestCase
         $callable = $router->validate([
             'callable' => function () {
             },
+            'parameters' => ['baz'],
             'foo',
             'bar'
         ]);
         $this->assertInstanceOf('Jivoo\Http\Route\CallableRoute', $callable);
-        $this->assertEquals(['foo', 'bar'], $callable->getParameters());
+        $this->assertEquals(['baz', 'foo', 'bar'], $callable->getParameters());
         
         $router->root('http://example.com');
         $this->assertEquals('http://example.com', $router->validate(''));

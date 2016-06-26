@@ -164,7 +164,7 @@ class Router implements Middleware, Route\Matcher
         foreach ($route as $key => $value) {
             if (is_int($key)) {
                 $parameters[] = $value;
-            } elseif ($key == 'paremeters') {
+            } elseif ($key == 'parameters') {
                 $parameters = array_merge($parameters, $value);
             } elseif (in_array($key, ['query', 'fragment', 'mergeQuery'])) {
                 $default[$key] = $value;
