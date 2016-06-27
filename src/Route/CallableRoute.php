@@ -22,7 +22,7 @@ class CallableRoute extends RouteBase
      * @param \Jivoo\Http\Route\callable $callable Dispatch function.
      * @param string[] $parameters Route parameters.
      */
-    public function __construct(callable $callable, $parameters)
+    public function __construct(callable $callable, array $parameters = [])
     {
         $this->callable = $callable;
         $this->parameters = $parameters;
@@ -33,7 +33,7 @@ class CallableRoute extends RouteBase
      */
     public function __toString()
     {
-        throw new RouteException('Cannot create string from a callable route');
+        return spl_object_hash($this->callable);
     }
 
     /**

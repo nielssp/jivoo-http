@@ -131,6 +131,9 @@ class Router implements Middleware, Route\Matcher
         if ($route instanceof Route\HasRoute) {
             return $this->validate($route->getRoute());
         }
+        if (is_callable($route)) {
+            return new Route\CallableRoute($route);
+        }
         if (is_string($route)) {
             if ($route == '') {
                 $route = $this->findMatch([], 'GET');
@@ -404,6 +407,9 @@ class Router implements Middleware, Route\Matcher
     public function applyPattern(array $pattern, array $path)
     {
         $length = count($pattern);
+        if ($length == 0 and count($path) > 0) {
+            return null;
+        }
         if ($length < count($path) and $pattern[$length - 1] != '**'
             and $pattern[$length - 1] != ':*') {
             return null;
@@ -550,7 +556,7 @@ class Router implements Middleware, Route\Matcher
         
         $this->route = $this->findMatch($path, $this->request->getMethod());
         if (! isset($this->route)) {
-            throw new Route\RouteException('No route found for path: ' . implode('/', $path));
+            throw new Route\RouteException('No route found for path "' . implode('/', $path) . '"');
         }
         $middleware = $this->middleware;
         
