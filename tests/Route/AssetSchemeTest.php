@@ -23,6 +23,14 @@ class AssetSchemeTest extends TestCase
         $this->assertEquals('tests/data/foo/css/bar.css', $assets->find('css/bar.css'));
     }
     
+    public function testGetMimeType()
+    {
+        $assets = new AssetScheme('tests/data/assets');
+        
+        $this->assertEquals('text/plain', $assets->getMimeType('foo.txt'));
+        $this->assertEquals('image/png', $assets->getMimeType('foo/bar.png'));
+    }
+    
     public function testRoute()
     {
         $assets = new AssetScheme('tests/data/assets');
@@ -39,6 +47,7 @@ class AssetSchemeTest extends TestCase
         );
         
         $this->assertEquals('/* Empty test file used in AssetSchemeTest */', $response->getBody()->getContents());
+        $this->assertEquals('text/css', $response->getHeaderLine('Content-Type'));
     }
     
     public function testRouting()
@@ -61,5 +70,6 @@ class AssetSchemeTest extends TestCase
         );
         
         $this->assertEquals('/* Empty test file used in AssetSchemeTest */', $response->getBody()->getContents());
+        $this->assertEquals('text/css', $response->getHeaderLine('Content-Type'));
     }
 }

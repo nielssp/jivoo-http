@@ -22,6 +22,11 @@ class AssetScheme implements Scheme
     private $errorHandler;
     
     /**
+     * @var \Mimey\MimeTypes
+     */
+    private $mimeTypes;
+    
+    /**
      * Construct asset scheme.
      *
      * @param string $defaultPath Default asset-path.
@@ -30,6 +35,7 @@ class AssetScheme implements Scheme
      */
     public function __construct($defaultPath, $errorHandler = null)
     {
+        $this->mimeTypes = new \Mimey\MimeTypes();
         $this->addPath('/', $defaultPath);
         $this->errorHandler = $errorHandler;
     }
@@ -48,6 +54,16 @@ class AssetScheme implements Scheme
         }
         return $response->withBody(new \Jivoo\Http\Message\StringStream('Asset not found'))
             ->withStatus(\Jivoo\Http\Message\Status::NOT_FOUND);
+    }
+    
+    /**
+     * Get MIME type of a file.
+     * @param string $fileName File name or path.
+     * @return string A MIME type.
+     */
+    public function getMimeType($fileName)
+    {
+        return $this->mimeTypes->getMimeType(\Jivoo\Utilities::getFileExtension($fileName));
     }
     
     /**
