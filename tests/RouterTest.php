@@ -102,7 +102,6 @@ class RouterTest extends TestCase
         $response5 = $router($request5, $response1);
         $this->assertEquals(Message\Status::SEE_OTHER, $response5->getStatusCode());
         $this->assertEquals('http://example.com/bar', $response5->getHeaderLine('Location'));
-        
     }
     
     public function testPatternMatch()

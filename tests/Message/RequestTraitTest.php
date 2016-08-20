@@ -51,7 +51,5 @@ class RequestTraitTest extends \Jivoo\TestCase
         
         $this->assertEquals('/bar', $request3->getUri()->getPath());
         $this->assertEquals('example.com', $request3->getHeaderLine('host'));
-        
-        
     }
 }
