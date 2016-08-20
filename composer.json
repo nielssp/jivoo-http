@@ -24,7 +24,7 @@
     "ext-json": "*",
     "psr/log": "1.0",
     "psr/http-message": "1.0",
-    "jivoo/core": "^0.25",
+    "jivoo/core": "^1.0",
     "composer/semver": "^1.2"
   },
   "require-dev": {
