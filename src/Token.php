@@ -23,7 +23,7 @@ class Token
 
     /**
      * Construct token.
-     * 
+     *
      * @param string|null $token Token string or null to generate one randomly.
      * @param string $name Token name.
      */
@@ -46,7 +46,7 @@ class Token
 
     /**
      * Whether or not the current request is has a valid token.
-     * 
+     *
      * @param \Psr\Http\Message\ServerRequestInterface Request.
      * @param string $key Optional key to test for existence in POST-data.
      * @return boolean True if valid, false otherwise.
@@ -65,7 +65,7 @@ class Token
     
     /**
      * Check the request token of a request.
-     * 
+     *
      * @param \Psr\Http\Message\ServerRequestInterface $request Request.
      * @return boolean True if valid, false otherwise.
      */
@@ -83,7 +83,7 @@ class Token
     
     /**
      * Get HTML for hidden form input containing the current token.
-     * 
+     *
      * @return string HTML code for a hidden input.
      */
     public function toHtml()
@@ -102,7 +102,7 @@ class Token
     /**
      * Create a token from a document (e.g. a session or state). Updates the
      * document when a new token is generated.
-     * 
+     *
      * @param \Jivoo\Store\Document $document Document.
      * @param string $name Token name.
      * @return \self New token.
@@ -117,7 +117,7 @@ class Token
     
     /**
      * Generate a random token string.
-     * 
+     *
      * @return string Token string.
      */
     public static function generate()
