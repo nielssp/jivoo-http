@@ -129,7 +129,7 @@ class AssetScheme implements Scheme
         }
         foreach ($this->paths[$namespace] as $path) {
             $file = $path['path'] . $asset;
-            if (file_exists($file)) {
+            if (is_file($file)) {
                 return $file;
             }
         }
