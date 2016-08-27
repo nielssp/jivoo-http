@@ -292,7 +292,7 @@ class Router implements Middleware, Route\Matcher
         if (! isset($pattern)) {
             return null;
         }
-        return new Route\NestedMatcher($this, $this->validator, $pattern);
+        return new Route\NestedMatcher($this, [$this, 'validate'], $pattern);
     }
 
     /**
@@ -305,7 +305,7 @@ class Router implements Middleware, Route\Matcher
         if (! isset($pattern)) {
             return null;
         }
-        return new Route\NestedMatcher($this, $this->validator, $pattern);
+        return new Route\NestedMatcher($this, [$this, 'validate'], $pattern);
     }
     
     /**
