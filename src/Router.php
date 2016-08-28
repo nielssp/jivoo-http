@@ -157,9 +157,9 @@ class Router implements Middleware, Route\Matcher
         \Jivoo\Assume::isArray($route);
                 
         $default = [
-            'parameters' => null,
-            'query' => null,
-            'fragment' => null,
+            'parameters' => [],
+            'query' => [],
+            'fragment' => '',
             'mergeQuery' => false
         ];
         $scheme = null;
