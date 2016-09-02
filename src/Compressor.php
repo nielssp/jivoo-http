@@ -47,5 +47,4 @@ class Compressor implements Middleware
         }
         return $response;
     }
-
 }

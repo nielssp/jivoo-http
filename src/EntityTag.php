@@ -38,5 +38,4 @@ class EntityTag implements Middleware
         }
         return $response;
     }
-
 }

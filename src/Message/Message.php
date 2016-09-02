@@ -180,5 +180,4 @@ class Message implements MessageInterface
     {
         return gmdate('D, d M Y H:i:s', $timestamp) . ' GMT';
     }
-
 }
