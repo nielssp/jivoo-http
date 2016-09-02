@@ -54,7 +54,8 @@ class AssetRoute extends RouteBase
             return $this->scheme->handleError($request, $response);
         }
         $type = $this->scheme->getMimeType($file);
-        return \Jivoo\Http\Message\Response::file($file, $type);
+        $response = \Jivoo\Http\Message\Response::file($file, $type);
+        return $response;
     }
 
     /**

@@ -39,6 +39,11 @@ class SapiServer extends EventSubjectBase
     private $middleware = [];
     
     /**
+     * @var string|null
+     */
+    private $compression = null;
+    
+    /**
      * Construct SAPI server.
      *
      * @param callable|null $handler Optional request handler. Must accept two
@@ -77,6 +82,17 @@ class SapiServer extends EventSubjectBase
         }
         return $this->cookies;
     }
+    
+    /**
+     * Set compression algorithm.
+     *
+     * @param string|null $compression Compression algorithm: 'bzip2', 'gzip' or
+     * null.
+     */
+    public function setCompression($compression)
+    {
+        $this->compression = $compression;
+    }
 
     /**
      * Add middleware.
@@ -107,7 +123,7 @@ class SapiServer extends EventSubjectBase
         $this->serveStatus($response);
         $this->serveCookies($cookies);
         $this->serveHeaders($response);
-        $this->serveBody($response);
+        $this->serveBody($response, $this->compression);
     }
     
     /**
@@ -174,17 +190,24 @@ class SapiServer extends EventSubjectBase
      * Output the response body.
      *
      * @param ResponseInterface $response The response.
+     * @param string $compression Compression to use: 'bzip2' or 'gzip'.
      */
-    protected function serveBody(ResponseInterface $response)
+    protected function serveBody(ResponseInterface $response, $compression = null)
     {
-        $out = fopen('php://output', 'wb');
         $body = $response->getBody();
         $body->rewind();
-        while (! $body->eof()) {
-            fwrite($out, $body->read(8192));
+        $out = fopen('php://output', 'wb');
+        if ($compression == 'bzip2') {
+            fwrite($out, bzcompress($body->getContents()));
+        } elseif ($compression == 'gzip') {
+            fwrite($out, gzencode($body->getContents()));
+        } else {
+            while (! $body->eof()) {
+                fwrite($out, $body->read(8192));
+            }
         }
-        $body->close();
         fclose($out);
+        $body->close();
     }
     
     /**

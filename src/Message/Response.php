@@ -69,11 +69,32 @@ class Response extends Message implements \Psr\Http\Message\ResponseInterface
     }
     
     /**
+     * Set cache settings.
+     * @param string $public Public or private.
+     * @param int|string $expires Time on which cache expires. Can be a UNIX
+     * timestamp or a string used with {@see strtotime()}.
+     */
+    public function cached($public = true, $expires = '+1 year')
+    {
+        if (!is_int($expires)) {
+            $expires = strtotime($expires);
+        }
+        $maxAge = $expires - time();
+        $pragma = $public ? 'public' : 'private';
+        $cache = $pragma . ', max-age=' . $maxAge;
+        $response = clone $this;
+        $response->setHeader('Expires', Message::date($expires));
+        $response->setHeader('Pragma', $pragma);
+        $response->setHeader('Cache-Control', $cache);
+        return $response;
+    }
+    
+    /**
      * Create a redirect response.
      *
      * @param string $location Redirect target.
      * @param bool $permanent Whether redirect is permanent.
-     * @return \self The response.
+     * @return self The response.
      */
     public static function redirect($location, $permanent = false)
     {
@@ -90,7 +111,7 @@ class Response extends Message implements \Psr\Http\Message\ResponseInterface
      *
      * @param string $path Path to file.
      * @param string|null $type Optional MIME type.
-     * @return \self The response.
+     * @return self The response.
      */
     public static function file($path, $type = null)
     {

@@ -75,6 +75,11 @@ class Request extends Message implements ServerRequestInterface
             UploadedFile::convert($_FILES),
             $_SERVER
         );
+        foreach ($_SERVER as $name => $value) {
+            if (substr_compare($name, 'HTTP_', 0, 5) === 0) {
+                $request->setHeader(str_replace('_', '-', substr($name, 5)), $value);
+            }
+        }
         return $request;
     }
     

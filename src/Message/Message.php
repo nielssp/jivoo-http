@@ -170,4 +170,15 @@ class Message implements MessageInterface
         unset($message->headerKeys[$name]);
         return $message;
     }
+    
+    /**
+     * Format a date for use in HTTP headers.
+     * @param int $timestamp UNIX timestamp.
+     * @return string Formatted date.
+     */
+    public static function date($timestamp)
+    {
+        return gmdate('D, d M Y H:i:s', $timestamp) . ' GMT';
+    }
+
 }

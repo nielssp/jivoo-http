@@ -482,7 +482,7 @@ class Router implements Middleware, Route\Matcher
             $this->request = $request;
             if (count($middleware)) {
                 $next = array_shift($middleware);
-                return $next($request, $response, $this->getNext($middleware));
+                return $next($request, $response, $this->getNext($middleware, $last));
             }
             return $last($request, $response);
         };
