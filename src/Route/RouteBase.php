@@ -109,6 +109,9 @@ abstract class RouteBase implements Route
      */
     public static function stripAttributes($routeString, &$route, $withParameters = true)
     {
+        $route['query'] = [];
+        $route['fragment'] = '';
+        $route['parameters'] = [];
         $regex = '/^(.*?)(?:\?([^?#]*))?(?:#([^#?]*))?$/';
         preg_match($regex, $routeString, $matches);
         if (isset($matches[2])) {

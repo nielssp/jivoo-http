@@ -28,7 +28,6 @@ class PathScheme implements Scheme
      */
     public function fromString($routeString)
     {
-        $route = [];
         $routeString = RouteBase::stripAttributes($routeString, $route);
         $route['path'] = substr($routeString, 5);
         return $this->fromArray($route);
