@@ -122,6 +122,6 @@ class Token
      */
     public static function generate()
     {
-        return \Jivoo\Binary::base64Encode(\Jivoo\Random::bytes(32));
+        return \Jivoo\Binary::base64Encode(\Jivoo\Random::bytes(32), true);
     }
 }

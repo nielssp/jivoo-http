@@ -77,7 +77,7 @@ class SapiServer extends EventSubjectBase
         if (! isset($this->cookies)) {
             $this->cookies = new Cookie\CookiePool();
             foreach ($this->request->getCookieParams() as $name => $value) {
-                $this->cookies[$name] = $value;
+                $this->cookies->add(new Cookie\MutableCookie($name, $value));
             }
         }
         return $this->cookies;

@@ -14,8 +14,13 @@ use Psr\Http\Message\ServerRequestInterface;
  * An action is a function from ({@see ActionRequest}, {@see ResponseInterface})
  * to {@see ResponseInterface}.
  */
-class Router implements Middleware, Route\Matcher
+class Router extends \Jivoo\EventSubjectBase implements Middleware, Route\Matcher
 {
+    
+    /**
+     * {@inheritdoc}
+     */
+    protected $events = ['dispatch', 'dispatched'];
  
     /**
      * @var ActionRequest|null
@@ -65,6 +70,10 @@ class Router implements Middleware, Route\Matcher
      */
     public function __construct(\Jivoo\Store\Document $config = null)
     {
+        parent::__construct();
+        if (isset($config)) {
+            $this->rewrite = $config->get('rewrite', $this->rewrite);
+        }
     }
     
     /**
@@ -560,8 +569,10 @@ class Router implements Middleware, Route\Matcher
         }
         $middleware = $this->middleware;
         
+        $this->triggerEvent('dispatch', new RouterEvent($this, $this->route, $this->request, $response));
         $first = $this->getNext($middleware, [$this->route, 'dispatch']);
         $response = $first($this->request, $response);
+        $this->triggerEvent('dispatched', new RouterEvent($this, $this->route, $this->request, $response));
         return $response;
     }
 }
