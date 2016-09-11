@@ -16,6 +16,30 @@ class CookiePool implements \ArrayAccess, \IteratorAggregate
      */
     private $cookies = [];
     
+    private $path;
+    
+    private $domain;
+    
+    private $httpOnly;
+    
+    private $secure;
+    
+    /**
+     * Construct cookie pool.
+     *
+     * @param string $path Default cookie path.
+     * @param string $domain Default cookie domain.
+     * @param bool $httpOnly Default HttpOnly flag.
+     * @param bool $secure Default Secure flag.
+     */
+    public function __construct($path = '/', $domain = '', $httpOnly = true, $secure = false)
+    {
+        $this->path = $path;
+        $this->domain = $domain;
+        $this->httpOnly = $httpOnly;
+        $this->secure = $secure;
+    }
+    
     /**
      * Add a cookie to the pool.
      *
@@ -33,10 +57,22 @@ class CookiePool implements \ArrayAccess, \IteratorAggregate
                 ->setHttpOnly($cookie->isHttpOnly())
                 ->expiresAt($cookie->getExpiration());
         } else {
-            $this->cookies[$cookie->getName()] = new MutableCookie($cookie->getName(), $cookie->get());
+            $this->cookies[$cookie->getName()] = $this->setDefaults(
+                new MutableCookie($cookie->getName(), $cookie->get())
+            );
         }
     }
     
+    private function setDefaults(MutableCookie $cookie, $new = false)
+    {
+        $changed = $cookie->hasChanged() || $new;
+        return $cookie->setPath($this->path)
+            ->setDomain($this->domain)
+            ->setSecure($this->secure)
+            ->setHttpOnly($this->httpOnly)
+            ->setChanged($changed);
+    }
+
     /**
      * Whether a cookie exists and is non-empty.
      *
@@ -57,7 +93,7 @@ class CookiePool implements \ArrayAccess, \IteratorAggregate
     public function offsetGet($name)
     {
         if (! isset($this->cookies[$name])) {
-            $this->cookies[$name] = new MutableCookie($name);
+            $this->cookies[$name] = $this->setDefaults(new MutableCookie($name), true);
         }
         return $this->cookies[$name];
     }

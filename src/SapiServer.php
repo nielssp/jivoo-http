@@ -17,6 +17,11 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class SapiServer extends EventSubjectBase
 {
+    
+    /**
+     * {@inheritdoc}
+     */
+    protected $events = ['serve', 'served'];
  
     /**
      * @var ServerRequestInterface
@@ -44,6 +49,16 @@ class SapiServer extends EventSubjectBase
     private $compression = null;
     
     /**
+     * @var string
+     */
+    private $path;
+    
+    /**
+     * @var string
+     */
+    private $domain;
+    
+    /**
      * Construct SAPI server.
      *
      * @param callable|null $handler Optional request handler. Must accept two
@@ -53,9 +68,15 @@ class SapiServer extends EventSubjectBase
      * @param ServerRequestInterface|null $request Optional request to handle.
      * The default value is created from PHP's superglobals, see
      * {@see Request::createGlobal}.
+     * @param string $path Cookie default path.
+     * @param string $domain Cookie default domain.
      */
-    public function __construct($handler = null, ServerRequestInterface $request = null)
-    {
+    public function __construct(
+        $handler = null,
+        ServerRequestInterface $request = null,
+        $path = '/',
+        $domain = ''
+    ) {
         parent::__construct();
         if (! isset($handler)) {
             $handler = function (ServerRequestInterface $request, ResponseInterface $response) {
@@ -67,6 +88,8 @@ class SapiServer extends EventSubjectBase
             $request = Request::createGlobal();
         }
         $this->request = $request;
+        $this->path = $path;
+        $this->domain = $domain;
     }
     
     /**
@@ -75,7 +98,9 @@ class SapiServer extends EventSubjectBase
     public function getCookies()
     {
         if (! isset($this->cookies)) {
-            $this->cookies = new Cookie\CookiePool();
+            $server = $this->request->getServerParams();
+            $secure = isset($server['HTTPS']) && $server['HTTPS'] != 'off';
+            $this->cookies = new Cookie\CookiePool($this->path, $this->domain, true, $secure);
             foreach ($this->request->getCookieParams() as $name => $value) {
                 $this->cookies->add(new Cookie\MutableCookie($name, $value));
             }
@@ -120,10 +145,18 @@ class SapiServer extends EventSubjectBase
                 'Headers already sent in ' . $file . ' on line ' . $line
             );
         }
+        $this->triggerEvent('serve', new \Jivoo\Event($this, [
+            'response' => $response,
+            'cookies' => $cookies
+        ]));
         $this->serveStatus($response);
         $this->serveCookies($cookies);
         $this->serveHeaders($response);
         $this->serveBody($response, $this->compression);
+        $this->triggerEvent('served', new \Jivoo\Event($this, [
+            'response' => $response,
+            'cookies' => $cookies
+        ]));
     }
     
     /**

@@ -79,9 +79,24 @@ class MutableCookie implements ResponseCookie
         return $this->value;
     }
     
+    /**
+     * {@inheritdoc}
+     */
     public function hasChanged()
     {
         return $this->changed;
+    }
+    
+    /**
+     * Set changed flag.
+     *
+     * @param bool $changed Changed.
+     * @return self Self.
+     */
+    public function setChanged($changed)
+    {
+        $this->changed = $changed;
+        return $this;
     }
     
     /**
