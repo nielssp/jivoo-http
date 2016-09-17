@@ -491,9 +491,21 @@ class Router extends \Jivoo\EventSubjectBase implements Middleware, Route\Matche
             $this->request = $request;
             if (count($middleware)) {
                 $next = array_shift($middleware);
-                return $next($request, $response, $this->getNext($middleware, $last));
+                $response = $next($request, $response, $this->getNext($middleware, $last));
+                if (! ($response instanceof ResponseInterface)) {
+                    throw new InvalidResponseException(
+                        'Invalid response returned from: ' . \Jivoo\Utilities::callableToString($next)
+                    );
+                }
+                return $response;
             }
-            return $last($request, $response);
+            $response = $last($request, $response);
+                if (! ($response instanceof ResponseInterface)) {
+                    throw new InvalidResponseException(
+                        'Invalid response returned from: ' . \Jivoo\Utilities::callableToString($last)
+                    );
+                }
+            return $response;
         };
     }
     

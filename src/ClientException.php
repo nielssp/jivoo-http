@@ -8,7 +8,7 @@ namespace Jivoo\Http;
 /**
  * Thrown to indicate a client error.
  */
-class ClientException
+class ClientException extends \RuntimeException implements \Jivoo\Exception
 {
     
     /**
@@ -20,4 +20,13 @@ class ClientException
      * @var string Optional reason phrase.
      */
     public $reasonPhrase = '';
+    
+    public function __construct($message = "", $statusCode = null, $code = 0, \Exception $previous = null)
+    {
+        parent::__construct($message, $code, $previous);
+        $this->statusCode = $statusCode;
+        if (isset($this->statusCode)) {
+            $this->reasonPhrase = Message\Status::phrase($this->statusCode);
+        }
+    }
 }
