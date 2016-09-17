@@ -500,11 +500,11 @@ class Router extends \Jivoo\EventSubjectBase implements Middleware, Route\Matche
                 return $response;
             }
             $response = $last($request, $response);
-                if (! ($response instanceof ResponseInterface)) {
-                    throw new InvalidResponseException(
-                        'Invalid response returned from: ' . \Jivoo\Utilities::callableToString($last)
-                    );
-                }
+            if (! ($response instanceof ResponseInterface)) {
+                throw new InvalidResponseException(
+                    'Invalid response returned from: ' . \Jivoo\Utilities::callableToString($last)
+                );
+            }
             return $response;
         };
     }
