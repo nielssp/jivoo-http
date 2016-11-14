@@ -102,7 +102,7 @@ class SapiServer extends EventSubjectBase
             $secure = isset($server['HTTPS']) && $server['HTTPS'] != 'off';
             $this->cookies = new Cookie\CookiePool($this->path, $this->domain, true, $secure);
             foreach ($this->request->getCookieParams() as $name => $value) {
-                $this->cookies->add(new Cookie\MutableCookie($name, $value));
+                $this->cookies->add(new Cookie\RequestCookie($name, $value));
             }
         }
         return $this->cookies;

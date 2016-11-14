@@ -6,7 +6,7 @@
 namespace Jivoo\Http\Cookie;
 
 /**
- * A cookie recieved as part of a request.
+ * A cookie received as part of a request.
  */
 interface Cookie
 {
