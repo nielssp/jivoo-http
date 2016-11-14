@@ -35,6 +35,20 @@ class AssetRoute extends RouteBase
     {
         return 'asset:' . implode('/', $this->parameters);
     }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function getQuery()
+    {
+        if ($this->scheme->getAppendMtime()) {
+            $file = $this->scheme->find(implode('/', $this->parameters));
+            if (isset($file)) {
+                return array_merge(parent::getQuery(), ['m' => filemtime($file)]);
+            }
+        }
+        return parent::getQuery();
+    }
 
     /**
      * {@inheritdoc}

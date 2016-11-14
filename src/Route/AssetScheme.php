@@ -27,17 +27,23 @@ class AssetScheme implements Scheme
     private $mimeTypes;
     
     /**
+     * @var bool
+     */
+    private $appendMtime;
+    
+    /**
      * Construct asset scheme.
      *
      * @param string $defaultPath Default asset-path.
      * @param callable|null $errorHandler A request handler. Called when an asset
      * does not exist.
      */
-    public function __construct($defaultPath, $errorHandler = null)
+    public function __construct($defaultPath, $errorHandler = null, $appendMtime = false)
     {
         $this->mimeTypes = new \Mimey\MimeTypes();
         $this->addPath('/', $defaultPath);
         $this->errorHandler = $errorHandler;
+        $this->appendMtime = $appendMtime;
     }
     
     /**
@@ -64,6 +70,14 @@ class AssetScheme implements Scheme
     public function getMimeType($fileName)
     {
         return $this->mimeTypes->getMimeType(\Jivoo\Utilities::getFileExtension($fileName));
+    }
+    
+    /**
+     * @return bool Whether the assets mtime is appended to the url.
+     */
+    public function getAppendMtime()
+    {
+        return $this->appendMtime;
     }
     
     /**
