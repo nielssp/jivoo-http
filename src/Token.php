@@ -100,20 +100,19 @@ class Token
     }
     
     /**
-     * Create a token from an {@see \ArrayAccess} object (e.g. a
-     * {@see \Jivoo\Store\Document} or {@see Cookie\CookiePool}). Updates the
-     * object when a new token is generated.
+     * Create a token from a document (e.g. a session or state). Updates the
+     * document when a new token is generated.
      *
-     * @param \ArrayAccess $array Token container.
-     * @param string $name Token name in container.
-     * @return self New token.
+     * @param \Jivoo\Store\Document $document Document.
+     * @param string $name Token name.
+     * @return \self New token.
      */
-    public static function create(\ArrayAccess $array, $name = 'request_token')
+    public static function create(\Jivoo\Store\Document $document, $name = 'request_token')
     {
-        if (! isset($array[$name])) {
-            $array[$name] = self::generate();
+        if (! isset($document[$name])) {
+            $document[$name] = self::generate();
         }
-        return new self(strval($array[$name]), $name);
+        return new self($document[$name], $name);
     }
     
     /**
