@@ -227,6 +227,12 @@ class ActionRequest extends Message\Message implements \Psr\Http\Message\ServerR
         return $str;
     }
     
+    /**
+     * Find the path array for a request.
+     *
+     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @return string[]
+     */
     public static function findPath(\Psr\Http\Message\ServerRequestInterface $request)
     {
         $server = $request->getServerParams();
@@ -246,6 +252,6 @@ class ActionRequest extends Message\Message implements \Psr\Http\Message\ServerR
         if ($path[0] == '/') {
             $path = substr($path, 1);
         }
-        return explode('/', $path);
+        return array_map('urldecode', explode('/', $path));
     }
 }
