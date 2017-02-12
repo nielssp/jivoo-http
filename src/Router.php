@@ -401,7 +401,7 @@ class Router extends \Jivoo\EventSubjectBase implements Middleware, Route\Matche
         } else {
             $uri = new Message\Uri($this->request->pathToString($path));
         }
-        $uri = $uri->withQuery(http_build_query($route->getQuery()))
+        $uri = $uri->withQuery($this->buildQuery($route->getQuery()))
             ->withFragment($route->getFragment());
         return $uri;
     }
@@ -522,7 +522,7 @@ class Router extends \Jivoo\EventSubjectBase implements Middleware, Route\Matche
     public function redirectPath($path, array $query = [], $fragment = '', $permanent = false, $rewrite = false)
     {
         $location = new Message\Uri($this->request->pathToString($path, $rewrite));
-        $location = $location->withQuery(http_build_query($query))
+        $location = $location->withQuery($this->buildQuery($query))
             ->withFragment($fragment);
         return Message\Response::redirect($location, $permanent);
     }
@@ -538,6 +538,16 @@ class Router extends \Jivoo\EventSubjectBase implements Middleware, Route\Matche
     {
         $route = $this->validate($route);
         return $this->redirectPath($this->getPath($route), $route->getQuery(), $route->getFragment(), $permanent);
+    }
+    
+    /**
+     * Create query string from associative array.
+     * @param string[] $query Query.
+     * @return string Query string.
+     */
+    protected function buildQuery(array $query)
+    {
+        return http_build_query($query);
     }
     
     /**
