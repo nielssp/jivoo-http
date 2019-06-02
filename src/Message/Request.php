@@ -80,6 +80,9 @@ class Request extends Message implements ServerRequestInterface
                 $request->setHeader(str_replace('_', '-', substr($name, 5)), $value);
             }
         }
+        if (isset($_SERVER['CONTENT_TYPE'])) {
+          $request->setHeader('Content-Type', $_SERVER['CONTENT_TYPE']);
+        }
         return $request;
     }
     
