@@ -81,7 +81,7 @@ class Request extends Message implements ServerRequestInterface
             }
         }
         if (isset($_SERVER['CONTENT_TYPE'])) {
-          $request->setHeader('Content-Type', $_SERVER['CONTENT_TYPE']);
+            $request->setHeader('Content-Type', $_SERVER['CONTENT_TYPE']);
         }
         return $request;
     }
