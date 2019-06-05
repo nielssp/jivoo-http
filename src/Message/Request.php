@@ -83,6 +83,9 @@ class Request extends Message implements ServerRequestInterface
         if (isset($_SERVER['CONTENT_TYPE'])) {
             $request->setHeader('Content-Type', $_SERVER['CONTENT_TYPE']);
         }
+        if (isset($_SERVER['CONTENT_LENGTH'])) {
+            $request->setHeader('Content-Length', $_SERVER['CONTENT_LENGTH']);
+        }
         return $request;
     }
     
